@@ -10,6 +10,8 @@ export interface Photo {
   categories?: Category[];
 }
 
+export type categoriesUnion = "Nature" | "City" | "People" | "Animals" | "Tech" | "Food";
+
 export const categoriesPool = ["Nature", "City", "People", "Animals", "Tech", "Food"] as const;
 
 type Category = typeof categoriesPool[number];
