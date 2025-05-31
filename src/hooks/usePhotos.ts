@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import axios from "axios";
 import type { Photo } from "../types";
 
@@ -9,12 +9,17 @@ export function usePhotos() {
   const [error, setError] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(true);
 
-  const fetchPhotos = useCallback(async () => {
+  const fetchedPages = useRef<Set<number>>(new Set());
+
+  const fetchPhotos = useCallback(async (currentPage: number) => {
+    if (fetchedPages.current.has(currentPage)) return; // Already fetched
+    fetchedPages.current.add(currentPage);
+
     try {
       setLoading(true);
       setError(null);
       const response = await axios.get<Photo[]>(
-        `https://picsum.photos/v2/list?page=${page}&limit=10`
+        `https://picsum.photos/v2/list?page=${currentPage}&limit=10`
       );
       if (response.data.length > 0) {
         setPhotos(prev => [...prev, ...response.data]);
@@ -28,11 +33,11 @@ export function usePhotos() {
     } finally {
       setLoading(false);
     }
-  }, [page]);
+  }, []);
 
   useEffect(() => {
-    fetchPhotos();
-  }, [fetchPhotos]);
+    fetchPhotos(page);
+  }, [fetchPhotos, page]);
 
   const loadMore = () => {
     if (hasMore && !loading) {
