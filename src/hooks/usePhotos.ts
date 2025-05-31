@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import axios from "axios";
 import type { Photo } from "../types";
+import addMetadataToPhotos from "../helper/addMetadataToPhotos";
 
 export function usePhotos() {
   const [photos, setPhotos] = useState<Photo[]>([]);
@@ -22,7 +23,8 @@ export function usePhotos() {
         `https://picsum.photos/v2/list?page=${currentPage}&limit=10`
       );
       if (response.data.length > 0) {
-        setPhotos(prev => [...prev, ...response.data]);
+        const photosWithMetadata = addMetadataToPhotos(response.data);
+        setPhotos(prev => [...prev, ...photosWithMetadata]);
         setHasMore(true);
       } else {
         setHasMore(false);

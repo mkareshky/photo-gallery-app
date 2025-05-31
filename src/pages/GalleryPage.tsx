@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { usePhotoContext } from "../context/PhotoContext";
 
 export const GalleryPage: React.FC = () => {
-const { photos, loading: isLoading, error, loadMore, hasMore } = usePhotoContext();
+  const { photos, loading: isLoading, error, loadMore, hasMore } = usePhotoContext();
   const observerRef = useRef<HTMLDivElement | null>(null);
 
   const handleObserver = useCallback(
@@ -100,7 +100,7 @@ const { photos, loading: isLoading, error, loadMore, hasMore } = usePhotoContext
                     <p className={css({ fontSize: "xs", color: "gray.500" })}>
                       {photo.upload_date
                         ? `Uploaded: ${new Date(photo.upload_date).toLocaleDateString()}`
-                        : `Viewed: ${new Date().toLocaleDateString()}`}
+                        : `Uploaded: Unknown`}
                     </p>
                   </div>
                 </Link>

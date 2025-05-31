@@ -1,36 +1,27 @@
 import React from "react";
 import { css } from "../styled-system/css";
+import type { PhotoCardProps } from "../types";
 
-interface PhotoCardProps {
-  photo: {
-    id: string;
-    author: string;
-    download_url: string;
-    width: number;
-    height: number;
-  };
-}
 
 export const PhotoCard: React.FC<PhotoCardProps> = ({ photo }) => {
-
-
   return (
     <div>
-      {
-        photo.download_url ?
-          <img
-            src={photo.download_url}
-            alt={photo.author}
-            className={css({
-              w: "full",
-              maxH: "80vh",
-              objectFit: "contain",
-              rounded: "2xl",
-              shadow: "lg",
-              mb: "6",
-            })}
-          /> :
-          <div className={css({
+      {photo.download_url ? (
+        <img
+          src={photo.download_url}
+          alt={photo.author}
+          className={css({
+            w: "full",
+            maxH: "80vh",
+            objectFit: "contain",
+            rounded: "2xl",
+            shadow: "lg",
+            mb: "6",
+          })}
+        />
+      ) : (
+        <div
+          className={css({
             p: "4",
             color: "blue.600",
             textAlign: "center",
@@ -41,11 +32,13 @@ export const PhotoCard: React.FC<PhotoCardProps> = ({ photo }) => {
             fontSize: "lg",
             width: "123vh",
             margin: "auto",
-            height: "50vh"
-          })}>
-            Photo not found
-          </div>
-      }
+            height: "50vh",
+          })}
+        >
+          Photo not found
+        </div>
+      )}
+
       <div
         className={css({
           textAlign: "center",
@@ -56,12 +49,25 @@ export const PhotoCard: React.FC<PhotoCardProps> = ({ photo }) => {
         })}
       >
         <h2 className={css({ fontSize: "2xl", fontWeight: "bold", mb: "2" })}>
-          {photo.author}
+          {photo.title || photo.author}
         </h2>
         <p className={css({ fontSize: "sm", color: "gray.600" })}>ID: {photo.id}</p>
         <p className={css({ fontSize: "sm", color: "gray.600", mb: "2" })}>
           Dimensions: {photo.width} × {photo.height}
         </p>
+        <p className={css({ fontSize: "sm", color: "gray.600", mb: "2" })}>
+          Uploaded:{" "}
+          {photo.upload_date
+            ? new Date(photo.upload_date).toLocaleDateString()
+            : "Unknown"}
+        </p>
+
+        {photo.categories && photo.categories.length > 0 && (
+          <p className={css({ fontSize: "sm", color: "gray.600", mb: "2" })}>
+            Categories: {photo.categories.join(", ")}
+          </p>
+        )}
+
         <a
           href={photo.download_url}
           target="_blank"
