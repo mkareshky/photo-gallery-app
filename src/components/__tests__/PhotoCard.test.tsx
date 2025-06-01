@@ -7,7 +7,7 @@ import { render, screen } from "@testing-library/react";
 import { PhotoCard } from "../PhotoCard";
 import type { Photo } from "../../types";
 
-describe("PhotoCard component", () => {
+describe("PhotoCard component (additional branches)", () => {
   const basePhoto: Photo = {
     id: "42",
     author: "Alice",
@@ -57,5 +57,58 @@ describe("PhotoCard component", () => {
     render(<PhotoCard photo={missingPhoto} />);
 
     expect(screen.getByText(/Photo not found/i)).toBeInTheDocument();
+  });
+
+  it("falls back to author text when title is an empty string", () => {
+    const photoNoTitle: Photo = {
+      ...basePhoto,
+      title: "",
+    };
+    render(<PhotoCard photo={photoNoTitle} />);
+
+    // Should render <h2> with author name when title is falsy
+    expect(screen.getByRole("heading", { level: 2 })).toHaveTextContent("Alice");
+  });
+
+  it("omits <figcaption> and uses 'Photo' alt‐text when author is missing", () => {
+    const photoNoAuthor: Photo = {
+      ...basePhoto,
+      author: "",
+      title: "Some Title",
+    };
+    render(<PhotoCard photo={photoNoAuthor} />);
+
+    // Alt‐text should be "Photo" since author is falsy
+    const img = screen.getByRole("img");
+    expect(img).toHaveAttribute("alt", "Photo");
+
+    // figcaption should NOT be in the document when author is empty
+    expect(screen.queryByText(/©/)).toBeNull();
+  });
+
+  it("shows 'Uploaded: Unknown' when upload_date is missing", () => {
+    const photoNoDate: Photo = {
+      ...basePhoto,
+      upload_date: "",
+    };
+    render(<PhotoCard photo={photoNoDate} />);
+
+    // Should render "Uploaded: Unknown"
+    expect(screen.getByText(/Uploaded:\s*Unknown/i)).toBeInTheDocument();
+  });
+
+  it("renders no <ul> when categories is empty or undefined", () => {
+    // Case 1: categories = []
+    const photoNoCats1: Photo = {
+      ...basePhoto,
+      categories: [],
+    };
+    const { rerender } = render(<PhotoCard photo={photoNoCats1} />);
+    expect(screen.queryByText(/Categories:/i)).toBeNull();
+
+    // Case 2: categories = undefined (omit the property)
+    const { categories, ...partialPhoto } = basePhoto;
+    render(<PhotoCard photo={partialPhoto as Photo} />);
+    expect(screen.queryByText(/Categories:/i)).toBeNull();
   });
 });
