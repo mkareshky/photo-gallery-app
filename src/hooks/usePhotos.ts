@@ -53,5 +53,6 @@ export function usePhotos() {
     error,
     loadMore,
     hasMore,
+    fetchPhotos, // <-- expose temporarily for testing
   };
 }
