@@ -5,12 +5,9 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import { PhotoProvider, usePhotoContext } from "../PhotoContext";
-import { usePhotos } from "../../hooks/usePhotos"; // import برای تایپ
 
-// یک mock واحد برای loadMore تعریف می‌کنیم:
 const mockLoadMore = jest.fn();
 
-// Mock کردن usePhotos؛ دقت کنید که loadMore به mockLoadMore اختصاص یافته است.
 jest.mock("../../hooks/usePhotos", () => ({
   usePhotos: () => ({
     photos: [
@@ -33,7 +30,6 @@ jest.mock("../../hooks/usePhotos", () => ({
   }),
 }));
 
-// یک کامپوننت برای مصرف کانتکست می‌سازیم
 const ConsumerComponent: React.FC = () => {
   const { photos, loading, error, loadMore, hasMore } = usePhotoContext();
 
@@ -65,17 +61,14 @@ describe("PhotoContext and usePhotoContext", () => {
       </PhotoProvider>
     );
 
-    // از mock: آرایه‌ی photos طولش ۱ است
     expect(screen.getByTestId("photos-count").textContent).toBe("1");
     expect(screen.getByTestId("loading").textContent).toBe("false");
     expect(screen.getByTestId("error").textContent).toBe("null");
     expect(screen.getByTestId("has-more").textContent).toBe("true");
 
-    // کلیک روی دکمه‌ی "Load More"
     const loadMoreButton = screen.getByTestId("load-more");
     loadMoreButton.click();
 
-    // assert که mockLoadMore فراخوانده شده باشد
     expect(mockLoadMore).toHaveBeenCalled();
   });
 });
