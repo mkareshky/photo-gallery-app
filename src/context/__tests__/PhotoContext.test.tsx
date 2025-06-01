@@ -7,7 +7,6 @@ import { render, screen } from "@testing-library/react";
 import { PhotoProvider, usePhotoContext } from "../PhotoContext";
 
 const mockLoadMore = jest.fn();
-
 jest.mock("../../hooks/usePhotos", () => ({
   usePhotos: () => ({
     photos: [
@@ -24,9 +23,9 @@ jest.mock("../../hooks/usePhotos", () => ({
       },
     ],
     loading: false,
-    error: null,
-    loadMore: mockLoadMore, // ← استفاده از mockLoadMore واحد
-    hasMore: true,
+    error: "Some error",
+    loadMore: mockLoadMore,
+    hasMore: false,
   }),
 }));
 
@@ -63,12 +62,11 @@ describe("PhotoContext and usePhotoContext", () => {
 
     expect(screen.getByTestId("photos-count").textContent).toBe("1");
     expect(screen.getByTestId("loading").textContent).toBe("false");
-    expect(screen.getByTestId("error").textContent).toBe("null");
-    expect(screen.getByTestId("has-more").textContent).toBe("true");
+    expect(screen.getByTestId("error").textContent).toBe("Some error");
+    expect(screen.getByTestId("has-more").textContent).toBe("false");
 
     const loadMoreButton = screen.getByTestId("load-more");
     loadMoreButton.click();
-
     expect(mockLoadMore).toHaveBeenCalled();
   });
 });

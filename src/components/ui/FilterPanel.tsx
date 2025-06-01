@@ -12,8 +12,6 @@ type Props = {
   onClearFilters: () => void;
 };
 
-
-
 export const FilterPanel: React.FC<Props> = ({
   searchTerm,
   category,
@@ -23,8 +21,6 @@ export const FilterPanel: React.FC<Props> = ({
   onDateChange,
   onClearFilters,
 }) => {
-
-
   const searchInput = css({
     px: "3",
     py: "2",
@@ -49,13 +45,17 @@ export const FilterPanel: React.FC<Props> = ({
     fontSize: "sm",
     border: "1px solid",
     borderColor: "gray.300",
-    bg: "red.500",
+    bg: "red.700",
     color: "white",
     px: "4",
     rounded: "md",
-    _hover: { bg: "red.600" },
-    _active: {
-      bg: "gray.300",
+    _hover: {
+      bg: "red.800",
+    },
+    _focus: {
+      outline: "none",
+      ring: "2",
+      ringColor: "blue.500",
     },
   });
 
@@ -72,13 +72,17 @@ export const FilterPanel: React.FC<Props> = ({
     _hover: {
       bg: "gray.200",
     },
-    _active: {
-      bg: "gray.300",
+    _focus: {
+      outline: "none",
+      ring: "2",
+      ringColor: "blue.500",
+      borderColor: "blue.500",
     },
-  })
+  });
 
   return (
-    <div
+    <section
+      aria-label="Filter panel"
       className={css({
         display: "flex",
         flexWrap: "wrap",
@@ -87,35 +91,36 @@ export const FilterPanel: React.FC<Props> = ({
         mb: "4",
       })}
     >
-      {/* Search Input */}
+
       <input
-        type="text"
+        aria-label="Search items"
         placeholder="Search..."
+        type="text"
         value={searchTerm}
         onChange={(e) => onSearchChange(e.target.value)}
         className={searchInput}
       />
 
-      {/* Category Select */}
       <CategorySelect
         category={category}
         onCategoryChange={onCategoryChange}
+        aria-label="Category"
       />
-      {/* Date Picker */}
       <input
         type="date"
         value={uploadDate}
         onChange={(e) => onDateChange(e.target.value)}
+        aria-label="Filter by upload date"
         className={datePicker}
       />
 
-      {/* Clear Filters Button */}
       <button
+        type="button"
         onClick={onClearFilters}
         className={clearFiltersButton}
       >
         Clear Filters
       </button>
-    </div>
+    </section>
   );
 };

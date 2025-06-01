@@ -4,8 +4,8 @@ import { screen, render, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { PhotoProvider } from "../../context/PhotoContext";
-import { GalleryPage } from "../../pages/GalleryPage";
-import { PhotoDetailPage } from "../../pages/PhotoDetailPage";
+import GalleryPage from "../../pages/GalleryPage";
+import PhotoDetailPage from "../../pages/PhotoDetailPage";
 
 const mockPhotos = [
   {
@@ -15,7 +15,7 @@ const mockPhotos = [
     width: 500,
     height: 500,
     url: "https://picsum.photos/id/1/500/500",
-    title: "Test Photo 1", 
+    title: "Test Photo 1",
     upload_date: "2021-01-01T12:00:00.000Z",
     categories: ["Nature"],
   },
@@ -26,7 +26,7 @@ const mockPhotos = [
     width: 600,
     height: 400,
     url: "https://picsum.photos/id/2/600/400",
-    title: "Test Photo 2",          
+    title: "Test Photo 2",
     upload_date: "2022-02-02T12:00:00.000Z",
     categories: ["City"],
   },

@@ -9,7 +9,6 @@ interface CategorySelectProps {
 }
 
 export const CategorySelect = ({ category, onCategoryChange }: CategorySelectProps) => {
-
   const categorySelect = css({
     px: "3",
     py: "2",
@@ -48,7 +47,6 @@ export const CategorySelect = ({ category, onCategoryChange }: CategorySelectPro
     _hover: { bg: "gray.100" },
     _highlighted: {
       bg: "blue.500",
-      color: "black.500",
       fontWeight: "bold",
     },
   });
