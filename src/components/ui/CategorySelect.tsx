@@ -1,5 +1,5 @@
 import React from "react";
-import * as Select from '@radix-ui/react-select';
+import * as Select from "@radix-ui/react-select";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
 import { css, cx } from "../../styled-system/css";
 
@@ -10,7 +10,7 @@ interface CategorySelectProps {
 
 export const CategorySelect = ({ category, onCategoryChange }: CategorySelectProps) => {
 
- const categorySelect = css({
+  const categorySelect = css({
     px: "3",
     py: "2",
     borderRadius: "md",
@@ -62,10 +62,13 @@ export const CategorySelect = ({ category, onCategoryChange }: CategorySelectPro
     { label: "Tech", value: "Tech" },
     { label: "Food", value: "Food" },
   ];
-  
+
+  const currentLabel =
+    categoryValues.find((cv) => cv.value === category)?.label ?? "Select category";
+
   return (
     <Select.Root value={category} onValueChange={onCategoryChange}>
-      <Select.Trigger className={categorySelect}>
+      <Select.Trigger aria-label={currentLabel} className={categorySelect} role="combobox">
         <Select.Value placeholder="Select category" />
         <Select.Icon>
           <ChevronDownIcon />
@@ -76,7 +79,12 @@ export const CategorySelect = ({ category, onCategoryChange }: CategorySelectPro
         <Select.Content className={categorySelectContent}>
           <Select.Viewport>
             {categoryValues.map(({ label, value }) => (
-              <Select.Item key={value} value={value} className={cx(categorySelectItem)}>
+              <Select.Item
+                key={value}
+                value={value}
+                className={cx(categorySelectItem)}
+                role="option"
+              >
                 <Select.ItemText>{label}</Select.ItemText>
               </Select.Item>
             ))}
@@ -85,4 +93,4 @@ export const CategorySelect = ({ category, onCategoryChange }: CategorySelectPro
       </Select.Portal>
     </Select.Root>
   );
-}
+};

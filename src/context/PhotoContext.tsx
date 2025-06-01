@@ -3,7 +3,7 @@ import { usePhotos } from "../hooks/usePhotos";
 import type { PhotoContextType } from "../types";
 
 
-const PhotoContext = createContext<PhotoContextType | undefined>(undefined);
+export const PhotoContext = createContext<PhotoContextType | undefined>(undefined);
 
 export const PhotoProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { photos, loading, error, loadMore, hasMore } = usePhotos();

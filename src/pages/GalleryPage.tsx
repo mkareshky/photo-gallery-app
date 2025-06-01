@@ -71,13 +71,18 @@ export const GalleryPage: React.FC = () => {
       (photo.title || "")
         .toLowerCase()
         .includes(debouncedSearchTerm.toLowerCase()) ||
-      photo.author.toLowerCase().includes(debouncedSearchTerm.toLowerCase());
+      photo.author
+        .toLowerCase()
+        .includes(debouncedSearchTerm.toLowerCase());
 
+    // *** Compare categories in a case-insensitive way: ***
     const matchesCategory =
       category === "all"
         ? true
         : category
-        ? (photo.categories || []).includes(category as categoriesUnion)
+        ? (photo.categories || [])
+            .map((c) => c.toLowerCase())
+            .includes(category.toLowerCase())
         : true;
 
     const matchesDate = uploadDate
@@ -89,7 +94,13 @@ export const GalleryPage: React.FC = () => {
 
   if (error) {
     return (
-      <div className={css({ p: "4", color: "red.600", textAlign: "center" })}>
+      <div
+        className={css({
+          p: "4",
+          color: "red.600",
+          textAlign: "center",
+        })}
+      >
         {error}
       </div>
     );
@@ -167,7 +178,13 @@ export const GalleryPage: React.FC = () => {
                       objectFit: "cover",
                     })}
                   />
-                  <div className={css({ p: "3", bg: "gray.50", textAlign: "left" })}>
+                  <div
+                    className={css({
+                      p: "3",
+                      bg: "gray.50",
+                      textAlign: "left",
+                    })}
+                  >
                     <p
                       className={css({
                         fontWeight: "semibold",
@@ -177,12 +194,18 @@ export const GalleryPage: React.FC = () => {
                     >
                       {photo.title || `Photo by ${photo.author}`}
                     </p>
-                    <p className={css({ fontSize: "xs", color: "gray.600" })}>
+                    <p
+                      className={css({ fontSize: "xs", color: "gray.600" })}
+                    >
                       Author: {photo.author}
                     </p>
-                    <p className={css({ fontSize: "xs", color: "gray.500" })}>
+                    <p
+                      className={css({ fontSize: "xs", color: "gray.500" })}
+                    >
                       {photo.upload_date
-                        ? `Uploaded: ${new Date(photo.upload_date).toLocaleDateString()}`
+                        ? `Uploaded: ${new Date(
+                            photo.upload_date
+                          ).toLocaleDateString()}`
                         : `Uploaded: Unknown`}
                     </p>
                   </div>

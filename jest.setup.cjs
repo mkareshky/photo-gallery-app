@@ -10,3 +10,10 @@ global.IntersectionObserver = class {
   unobserve() {}
   disconnect() {}
 };
+
+Object.defineProperty(HTMLElement.prototype, "hasPointerCapture", {
+  writable: true,
+  value: () => false,
+});
+
+HTMLElement.prototype.scrollIntoView = function () {};
