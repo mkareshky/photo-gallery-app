@@ -1,5 +1,3 @@
-// src/pages/GalleryPage.tsx
-
 import React, { useEffect, useRef, useCallback, useState } from "react";
 import { css } from "../styled-system/css";
 import * as Tooltip from "@radix-ui/react-tooltip";
@@ -22,10 +20,12 @@ export const GalleryPage: React.FC = () => {
   const observerRef = useRef<IntersectionObserver | null>(null);
 
   const [filterKey, setFilterKey] = useState<number>(0);
-
   useEffect(() => {
     setFilterKey((prev) => prev + 1);
   }, [debouncedSearchTerm, category, uploadDate]);
+
+  const isFiltering =
+    debouncedSearchTerm !== "" || category !== "all" || uploadDate !== "";
 
   const handleObserver = useCallback(
     (entries: IntersectionObserverEntry[]) => {
@@ -59,12 +59,12 @@ export const GalleryPage: React.FC = () => {
   }, [filterKey]);
 
   useEffect(() => {
-    if (!loading && photos.length > 0 && hasMore) {
+    if (!isFiltering && !loading && photos.length > 0 && hasMore) {
       if (observerRef.current && sentinelRef.current) {
         observerRef.current.observe(sentinelRef.current);
       }
     }
-  }, [loading, photos.length, hasMore]);
+  }, [loading, photos.length, hasMore, filterKey, isFiltering]);
 
   const filteredPhotos = photos.filter((photo: Photo) => {
     const matchesSearch =
