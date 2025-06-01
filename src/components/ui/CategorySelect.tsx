@@ -1,6 +1,7 @@
+import React from "react";
 import * as Select from '@radix-ui/react-select';
 import { ChevronDownIcon } from "@radix-ui/react-icons";
-import { css, cx } from "../../styled-system/css"; // adjust import path if needed
+import { css, cx } from "../../styled-system/css";
 
 interface CategorySelectProps {
   category: string;

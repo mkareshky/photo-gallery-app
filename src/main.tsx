@@ -1,14 +1,14 @@
-import { StrictMode } from 'react'
-import { RouterProvider } from 'react-router-dom'
-import { createRoot } from 'react-dom/client'
-import { router } from './router/index.tsx'
-import { PhotoProvider } from './context/PhotoContext.tsx'
-import './index.css'
+import React from "react";
+import { createRoot } from "react-dom/client";
+import { RouterProvider } from "react-router-dom";
+import { PhotoProvider } from "./context/PhotoContext";
+import { router } from "./router";
+import "./index.css";
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
+createRoot(document.getElementById("root")!).render(
+  <React.StrictMode>
     <PhotoProvider>
       <RouterProvider router={router} />
     </PhotoProvider>
-  </StrictMode>,
-)
+  </React.StrictMode>
+);

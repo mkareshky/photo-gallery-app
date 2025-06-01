@@ -1,3 +1,4 @@
+import React from "react";
 import { css } from "../styled-system/css";
 import { useParams, useNavigate } from "react-router-dom";
 import { PhotoCard } from "../components/PhotoCard";

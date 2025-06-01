@@ -1,11 +1,33 @@
 {
   "compilerOptions": {
+    "jsx": "react",
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "node",
     "strict": true,
     "baseUrl": ".",
     "isolatedModules": true,
-    "resolveJsonModule": true,
     "esModuleInterop": true,
-    "lib": ["DOM", "ES2017", "WebWorker"]
+    "paths": {
+      "@/*": [
+        "src/*"
+      ]
+    },
+    "lib": [
+      "DOM",
+      "ES2017",
+      "WebWorker"
+    ],
+    "types": [
+      "jest",
+      "@testing-library/jest-dom"
+    ]
   },
-  "include": ["src/**/*.d.ts", "src/**/*.ts", "src/**/*.js"]
+  "include": [
+    "src/**/*",
+    "jest.setup.ts",
+    "src/**/*.d.ts",
+    "src/**/*.ts",
+    "src/**/*.js"
+  ]
 }
