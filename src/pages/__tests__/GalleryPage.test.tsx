@@ -40,7 +40,7 @@ const mockPhotos: Photo[] = [
     url: "https://picsum.photos/id/2/600/450",
     title: "Photo by Bob",
     upload_date: "2022-02-02T12:00:00.000Z",
-    categories: ["City","Tech"],
+    categories: ["City", "Tech"],
   },
 ];
 
@@ -329,8 +329,8 @@ describe("GalleryPage component", () => {
           this as any
         );
       }
-      unobserve() {}
-      disconnect() {}
+      unobserve() { }
+      disconnect() { }
     }
     // @ts-ignore
     window.IntersectionObserver = MockObserver;
@@ -398,4 +398,94 @@ describe("GalleryPage component", () => {
     // Restore original useState
     useStateSpy.mockRestore();
   });
+
+  /**
+* 1) CATEGORY‐FILTER TEST (hits the `.map((c)=>c.toLowerCase())` branch)
+* 
+* Note: FilterPanel renders a Radix‐style combobox `<button aria-label="All Categories">…</button>`,
+* so we find it by role/name, click to open, then pick “Tech” from the list.
+*/
+  it("Must allow filtering by a non‐all category (hits the `.map((c)=>c.toLowerCase())` branch)", async () => {
+    const fakeContextValue: PhotoContextType = {
+      photos: mockPhotos,
+      loading: false,
+      error: null,
+      loadMore: jest.fn(),
+      hasMore: false,
+    };
+
+    render(
+      <PhotoContext.Provider value={fakeContextValue}>
+        <MemoryRouter initialEntries={["/"]}>
+          <Routes>
+            <Route path="/" element={<GalleryPage />} />
+          </Routes>
+        </MemoryRouter>
+      </PhotoContext.Provider>
+    );
+
+    // 1) Verify both photos are visible initially (category="all")
+    await waitFor(() => {
+      expect(screen.getByText(/Photo by Alice/i)).toBeInTheDocument();
+      expect(screen.getByText(/Photo by Bob/i)).toBeInTheDocument();
+    });
+
+    // 2) Find and click the "All Categories" combobox button
+    const categoryButton = screen.getByRole("combobox", { name: /All Categories/i });
+    expect(categoryButton).toBeInTheDocument();
+    await userEvent.click(categoryButton);
+
+    // 3) Wait for the "Tech" option to appear, then click it
+    const techOption = await screen.findByText("Tech");
+    await userEvent.click(techOption);
+
+    // 4) Now only Bob’s card (which has category "Tech") should remain
+    await waitFor(() => {
+      expect(screen.getByText(/Photo by Bob/i)).toBeInTheDocument();
+      expect(screen.queryByText(/Photo by Alice/i)).toBeNull();
+    });
+  });
+
+  /**
+   * 2) UPLOAD‐DATE‐MATCH TEST (hits the `.startsWith(...)` branch)
+   */
+  it("Must allow filtering by upload date when it actually matches `.startsWith(...)`", async () => {
+    const fakeContextValue: PhotoContextType = {
+      photos: mockPhotos,
+      loading: false,
+      error: null,
+      loadMore: jest.fn(),
+      hasMore: false,
+    };
+
+    const { container } = render(
+      <PhotoContext.Provider value={fakeContextValue}>
+        <MemoryRouter initialEntries={["/"]}>
+          <Routes>
+            <Route path="/" element={<GalleryPage />} />
+          </Routes>
+        </MemoryRouter>
+      </PhotoContext.Provider>
+    );
+
+    // Both photos should be present initially
+    await waitFor(() => {
+      expect(screen.getByText(/Photo by Alice/i)).toBeInTheDocument();
+      expect(screen.getByText(/Photo by Bob/i)).toBeInTheDocument();
+    });
+
+    // Grab the <input type="date" /> that FilterPanel renders
+    const dateInput = container.querySelector('input[type="date"]') as HTMLInputElement;
+    if (!dateInput) throw new Error("Date input not found");
+
+    // Set date to "2021-01-01" (Alice’s upload_date starts with that)
+    fireEvent.change(dateInput, { target: { value: "2021-01-01" } });
+
+    // Now only Alice should remain, Bob should be gone
+    await waitFor(() => {
+      expect(screen.getByText(/Photo by Alice/i)).toBeInTheDocument();
+      expect(screen.queryByText(/Photo by Bob/i)).toBeNull();
+    });
+  });
+
 });
