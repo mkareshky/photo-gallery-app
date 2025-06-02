@@ -23,28 +23,39 @@ describe("PhotoCard component (additional branches)", () => {
   it("Must display all photo elements when images are available", () => {
     render(<PhotoCard photo={basePhoto} />);
 
-    // Image with correct src and alt:
-    const img = screen.getByRole("img", { name: /Alice/i });
-    expect(img).toBeInTheDocument();
-    expect(img).toHaveAttribute("src", basePhoto.download_url);
+    // The component now renders a <figure> placeholder instead of a raw <img>.
+    // Verify that <figure> is present:
+    const figure = screen.getByRole("figure");
+    expect(figure).toBeInTheDocument();
 
-    // Title (h2)
-    expect(screen.getByRole("heading", { name: /Amazing Scenery/i })).toBeInTheDocument();
+    // Verify that <figcaption> displays "© Alice":
+    expect(screen.getByText(/©\s*Alice/i)).toBeInTheDocument();
 
-    // Display ID
+    // Title (<h2>):
+    expect(
+      screen.getByRole("heading", { name: /Amazing Scenery/i })
+    ).toBeInTheDocument();
+
+    // Display ID:
     expect(screen.getByText(/ID:\s*42/i)).toBeInTheDocument();
 
-    // Display dimensions
-    expect(screen.getByText(/Dimensions:\s*800\s*×\s*600/i)).toBeInTheDocument();
+    // Display dimensions:
+    expect(
+      screen.getByText(/Dimensions:\s*800\s*×\s*600/i)
+    ).toBeInTheDocument();
 
-    // Display upload date
-    const formattedDate = basePhoto.upload_date ? new Date(basePhoto.upload_date).toLocaleDateString() : '';
-    expect(screen.getByText(new RegExp(`Uploaded:\\s*${formattedDate}`))).toBeInTheDocument();
+    // Display upload date:
+    const formattedDate = new Date(basePhoto.upload_date || "").toLocaleDateString();
+    expect(
+      screen.getByText(new RegExp(`Uploaded:\\s*${formattedDate}`))
+    ).toBeInTheDocument();
 
-    // Display categories
-    expect(screen.getByText(/Categories:\s*Nature,\s*People/i)).toBeInTheDocument();
+    // Display categories:
+    expect(
+      screen.getByText(/Categories:\s*Nature,\s*People/i)
+    ).toBeInTheDocument();
 
-    // Link "View Original"
+    // Link "View Original":
     const link = screen.getByRole("link", { name: /View Original/i });
     expect(link).toHaveAttribute("href", basePhoto.download_url);
   });
@@ -66,11 +77,12 @@ describe("PhotoCard component (additional branches)", () => {
     };
     render(<PhotoCard photo={photoNoTitle} />);
 
-    // Should render <h2> with author name when title is falsy
-    expect(screen.getByRole("heading", { level: 2 })).toHaveTextContent("Alice");
+    // When title is an empty string, the component renders the author (Alice) as <h2>
+    const heading = screen.getByRole("heading", { level: 2 });
+    expect(heading).toHaveTextContent("Alice");
   });
 
-  it("omits <figcaption> and uses 'Photo' alt‐text when author is missing", () => {
+  it("omits <figcaption> and does not render an <img> when author is missing", () => {
     const photoNoAuthor: Photo = {
       ...basePhoto,
       author: "",
@@ -78,12 +90,17 @@ describe("PhotoCard component (additional branches)", () => {
     };
     render(<PhotoCard photo={photoNoAuthor} />);
 
-    // Alt‐text should be "Photo" since author is falsy
-    const img = screen.getByRole("img");
-    expect(img).toHaveAttribute("alt", "Photo");
-
-    // figcaption should NOT be in the document when author is empty
+    // There should be no <figcaption> because author is empty:
     expect(screen.queryByText(/©/)).toBeNull();
+
+    // The component’s <figure> placeholder is present, but no <img> is rendered yet:
+    expect(screen.getByRole("figure")).toBeInTheDocument();
+    expect(screen.queryByRole("img")).toBeNull();
+
+    // Verify that <h2> still shows the title "Some Title":
+    expect(
+      screen.getByRole("heading", { name: /Some Title/i })
+    ).toBeInTheDocument();
   });
 
   it("shows 'Uploaded: Unknown' when upload_date is missing", () => {
@@ -97,7 +114,7 @@ describe("PhotoCard component (additional branches)", () => {
     expect(screen.getByText(/Uploaded:\s*Unknown/i)).toBeInTheDocument();
   });
 
-  it("renders no <ul> when categories is empty or undefined", () => {
+  it("renders no Categories line when categories is empty or undefined", () => {
     // Case 1: categories = []
     const photoNoCats1: Photo = {
       ...basePhoto,
@@ -108,7 +125,7 @@ describe("PhotoCard component (additional branches)", () => {
 
     // Case 2: categories = undefined (omit the property)
     const { categories, ...partialPhoto } = basePhoto;
-    render(<PhotoCard photo={partialPhoto as Photo} />);
+    rerender(<PhotoCard photo={partialPhoto as Photo} />);
     expect(screen.queryByText(/Categories:/i)).toBeNull();
   });
 });

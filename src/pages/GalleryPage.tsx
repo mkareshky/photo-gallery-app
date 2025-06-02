@@ -4,8 +4,9 @@ import * as Tooltip from "@radix-ui/react-tooltip";
 import { Link } from "react-router-dom";
 import { usePhotoContext } from "../context/PhotoContext";
 import type { Photo } from "../types";
-import { FilterPanel } from "../components/ui/FilterPanel";
+import { FilterPanel } from "../components/FilterPanel";
 import { useDebounce } from "../hooks/useDebounce";
+import { LazyImage } from "../components/LazyImage";
 
 const GalleryPage: React.FC = () => {
   const { photos, loading, error, loadMore, hasMore } = usePhotoContext();
@@ -184,7 +185,7 @@ const GalleryPage: React.FC = () => {
                         },
                       })}
                     >
-                      <img
+                      <LazyImage
                         src={photo.download_url}
                         alt={photo.title || `Photo by ${photo.author}`}
                         className={css({
@@ -193,7 +194,9 @@ const GalleryPage: React.FC = () => {
                           aspectRatio: "1 / 1",
                           objectFit: "cover",
                         })}
+                        placeholderHeight={250} 
                       />
+
                       <div
                         className={css({
                           p: "3",

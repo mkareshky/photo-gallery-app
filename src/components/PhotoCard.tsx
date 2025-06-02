@@ -1,6 +1,7 @@
 import React from "react";
 import { css } from "../styled-system/css";
 import type { PhotoCardProps } from "../types";
+import { LazyImage } from "./LazyImage";
 
 export const PhotoCard: React.FC<PhotoCardProps> = ({ photo }) => {
   return (
@@ -17,15 +18,16 @@ export const PhotoCard: React.FC<PhotoCardProps> = ({ photo }) => {
       {/* FIGURE: image + caption */}
       <figure>
         {photo.download_url ? (
-          <img
+          <LazyImage
             src={photo.download_url}
-            alt={photo.author || "Photo"}
+            alt={photo.title || `Photo by ${photo.author}`}
             className={css({
               w: "full",
-              maxH: "80vh",
-              objectFit: "contain",
-              rounded: "2xl 2xl 0 0",
+              h: "auto",
+              aspectRatio: "1.5 / 1",
+              objectFit: "cover",
             })}
+            placeholderHeight={250}
           />
         ) : (
           <div
@@ -75,60 +77,63 @@ export const PhotoCard: React.FC<PhotoCardProps> = ({ photo }) => {
           rounded: "0 0 2xl 2xl",
         })}
       >
-        <h2 className={css({ fontSize: "2xl", fontWeight: "bold", mb: "2" })}>
-          {photo.title || photo.author}
-        </h2>
-        <p className={css({ fontSize: "sm", color: "gray.600", mb: "1" })}>
-          ID: {photo.id}
-        </p>
-        <p className={css({ fontSize: "sm", color: "gray.600", mb: "1" })}>
-          Dimensions: {photo.width} × {photo.height}
-        </p>
-        <p className={css({ fontSize: "sm", color: "gray.600", mb: "1" })}>
-          Uploaded:{" "}
-          {photo.upload_date
-            ? new Date(photo.upload_date).toLocaleDateString()
-            : "Unknown"}
-        </p>
 
 
-        {photo.categories && photo.categories.length > 0 && (
-          <ul
-            className={css({
-              listStyleType: "disc",
-              listStylePosition: "inside",
-              fontSize: "sm",
-              color: "gray.600",
-              mb: "2",
-              textAlign: "left",
-              px: { base: "4", md: "8" },
-            })}
-          >
+        <ul
+          className={css({
+            listStyleType: "disc",
+            listStylePosition: "inside",
+            fontSize: "sm",
+            color: "gray.600",
+            mb: "2",
+            textAlign: "left",
+            px: { base: "4", md: "8" },
+          })}
+        >
+          <h2 className={css({ fontSize: "2xl", fontWeight: "bold", mb: "2" })}>
+            {photo.title || photo.author}
+          </h2>
+          <p className={css({ fontSize: "sm", color: "gray.600", mb: "1" })}>
+            ID: {photo.id}
+          </p>
+          <p className={css({ fontSize: "sm", color: "gray.600", mb: "1" })}>
+            Dimensions: {photo.width} × {photo.height}
+          </p>
+          <p className={css({ fontSize: "sm", color: "gray.600", mb: "1" })}>
+            Uploaded:{" "}
+            {photo.upload_date
+              ? new Date(photo.upload_date).toLocaleDateString()
+              : "Unknown"}
+          </p>
+          {photo.categories && photo.categories.length > 0 && (
+
             <p>
               Categories: {photo.categories.join(", ")}
             </p>
-          </ul>
-        )}
+          )}
 
-        <a
-          href={photo.download_url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={css({
-            mt: "4",
-            display: "inline-block",
-            fontSize: "sm",
-            color: "blue.600",
-            textDecoration: "underline",
-            _hover: { color: "blue.800" },
-            _focusVisible: {
-              outline: "2px solid",
-              outlineColor: "blue.500",
-            },
-          })}
-        >
-          View Original
-        </a>
+
+          <a
+            href={photo.download_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={css({
+              mt: "4",
+              display: "inline-block",
+              fontSize: "sm",
+              color: "blue.600",
+              textDecoration: "underline",
+              _hover: { color: "blue.800" },
+              _focusVisible: {
+                outline: "2px solid",
+                outlineColor: "blue.500",
+              },
+            })}
+          >
+            View Original
+          </a>
+        </ul>
+
       </header>
     </article>
   );
