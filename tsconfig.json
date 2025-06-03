@@ -8,6 +8,7 @@
     "baseUrl": ".",
     "isolatedModules": true,
     "esModuleInterop": true,
+     "skipLibCheck": true,
     "paths": {
       "@/*": [
         "src/*"
@@ -15,10 +16,10 @@
     },
     "lib": [
       "DOM",
-      "ES2017",
-      "WebWorker"
+      "ES2017"
     ],
     "types": [
+      "node",
       "jest",
       "@testing-library/jest-dom"
     ]
