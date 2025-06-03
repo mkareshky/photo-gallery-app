@@ -4,6 +4,17 @@ A responsive, accessible, and test-driven photo gallery application built with R
 
 ---
 
+
+> **Note:** In this demo, the `categories` array is populated by picking two random entries from `categoriesPool`. As a result, a photo’s assigned categories are purely illustrative and do not necessarily correspond to the actual content of the image.
+
+
+## Live Demo
+
+Check out the deployed version here:  
+[https://photo-gallery-app-mauve.vercel.app/](https://photo-gallery-app-mauve.vercel.app/)
+
+---
+
 ## Table of Contents
 
 * [Features](#features)
@@ -15,6 +26,8 @@ A responsive, accessible, and test-driven photo gallery application built with R
   * [Running in Development Mode](#running-in-development-mode)
   * [Building for Production](#building-for-production)
   * [Previewing the Production Build](#previewing-the-production-build)
+
+* [Mock Data](#mock-data)
 * [Testing](#testing)
 * [Architectural Decisions & Patterns](#architectural-decisions--patterns)
 * [Accessibility](#accessibility)
@@ -26,42 +39,35 @@ A responsive, accessible, and test-driven photo gallery application built with R
 ## Features
 
 * **Photo Gallery**
-
   * Fetches a grid of photos from a public REST API (e.g., [Picsum.photos](https://picsum.photos/) or [JSONPlaceholder](https://jsonplaceholder.typicode.com/)).
   * Displays photo thumbnails in a responsive, mobile-first grid.
   * Implements infinite scroll (or pagination) to load more photos as the user scrolls.
   * Shows basic metadata (title, author, upload date) with each thumbnail.
 
 * **Photo Details Page**
-
   * Clicking on a thumbnail navigates to a detail view (React Router).
   * Displays the full-size image plus extended metadata (title, author, date, description).
   * “Next” / “Previous” navigation buttons to cycle through photos without going back to the gallery.
 
 * **Search & Filter**
-
   * Text-based search (by title or author).
   * Filter dropdowns (e.g., by upload date range or category).
   * Clear search and filter controls.
 
 * **Responsive Design**
-
   * Mobile-first CSS layout, works on phones, tablets, and desktops.
   * Layout adapts from a single-column list on narrow screens to a multi-column grid on wider screens.
 
 * **Error Handling & Loading States**
-
   * Graceful UI when the API call fails (error message and retry).
   * Skeleton loaders or spinner indicators while fetching.
 
 * **Testing**
-
   * Jest & React Testing Library for unit and integration tests.
   * Test coverage target: ≥ 90%.
   * Mocks for REST API calls.
 
 * **Code Quality**
-
   * TypeScript for type safety.
   * Panda CSS for utility-first styling (no class-name collisions).
 
@@ -70,37 +76,30 @@ A responsive, accessible, and test-driven photo gallery application built with R
 ## Tech Stack
 
 * **Framework & Language**
-
   * React 18 + TypeScript
   * Vite (bundler & dev server)
 
 * **State Management & Data**
-
   * React Context API (`PhotoContext`)
   * Custom React Hooks (`usePhotos`, `useDebounce`, etc.)
 
 * **Routing**
-
   * React Router
 
 * **Styling**
-
   * Panda CSS (utility-first, atomic-style approach)
   * Global resets & base styles in `index.css`
 
 * **Component Primitives**
-
   * Radix UI
 
 * **Testing**
-
   * Jest
   * React Testing Library
   * `@testing-library/jest-dom`
   * Mocks for file imports and styling modules (see `__mocks__`)
 
 * **Tooling & Configuration**
-
   * Vite (`vite.config.ts`)
   * TypeScript (`tsconfig.json`)
   * ESLint + Prettier (`.eslintrc.js`)
@@ -114,7 +113,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-* Node.js ≥ 14.x
+* Node.js ≥ 14.x  
 * npm or Yarn installed
 
 ### Installation
@@ -124,7 +123,6 @@ These instructions will get you a copy of the project up and running on your loc
    ```bash
    git clone https://github.com/mkareshky/photo-gallery-app.git
    cd photo-gallery-app
-   ```
 
 2. **Install dependencies**
 
@@ -172,6 +170,31 @@ Then visit `http://localhost:5000` (or whichever port is shown) to see the produ
 
 ---
 
+## Mock Data
+
+For this demo, photo metadata (title, upload date, categories) is generated using mock data. In particular, the helper function below takes an array of photos (fetched from the API) and adds a random title, upload date, and one or two categories per photo. Because categories are chosen at random from a predefined pool, they may not actually match the photo content.
+
+```ts
+import { categoriesPool, type Photo } from "../types";
+import generateRandomDate from "./generateRandomDate";
+
+// Helper function to add metadata to photos
+const addMetadataToPhotos = (photos: Photo[]): Photo[] => {
+  return photos.map(photo => ({
+    ...photo,
+    title: `Photo by ${photo.author}`,
+    upload_date: generateRandomDate(),
+    categories: [
+      categoriesPool[Math.floor(Math.random() * categoriesPool.length)],
+      categoriesPool[Math.floor(Math.random() * categoriesPool.length)]
+    ].filter((cat, idx, arr) => arr.indexOf(cat) === idx) // Ensure unique categories
+  }));
+};
+
+export default addMetadataToPhotos;
+```
+---
+
 ## Testing
 
 This project uses Jest + React Testing Library for unit and integration tests. Mocks are defined in the `__mocks__` folder to stub out static assets (images, CSS modules) and external services.
@@ -198,7 +221,6 @@ yarn test:ci
 * Generates a coverage report (typically in `coverage/lcov-report/index.html`).
 * Coverage threshold is set to 80%. You can open the HTML report in your browser to inspect uncovered lines.
 
-
 ---
 
 ## Architectural Decisions & Patterns
@@ -209,7 +231,7 @@ yarn test:ci
 2. **Repository Pattern & Data Layer**
 
    * The `usePhotos.ts` hook encapsulates all REST API calls (fetching pages, applying filters).
-   * Helper functions (`addMetadataToPhotos.ts`, `generateRandomDate.ts`) isolate data transformations.
+   * Helper functions (`addMetadataToPhotos.ts`, `generateRandomDate.ts`) isolate data transformations—including the mock-data logic that generates titles, dates, and categories.
    * `PhotoContext.tsx` provides a global store for photo data, caching, and pagination state.
 
 3. **Custom Hooks**
