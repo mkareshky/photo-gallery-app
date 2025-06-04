@@ -1,6 +1,6 @@
 # Photo Gallery App
 
-A responsive, accessible, and test-driven photo gallery application built with React, TypeScript, and Vite. The app fetches photos from a public REST API, displays them in a paginated/infinite-scroll gallery, and allows users to click on any photo to see its full-size version along with metadata. Accessibility best practices (WCAG 2.1 A) are applied throughout, and the codebase is architected following SOLID principles.
+A responsive, accessible, and test-driven photo gallery application built with React, TypeScript, and Vite. The app fetches photos from a public REST API, displays them in an infinite‐scroll gallery, and allows users to click on any photo to see its full‐size version along with metadata. Accessibility best practices (WCAG 2.1 A) are applied throughout, and the codebase is architected following SOLID principles.
 
 ---
 
@@ -8,10 +8,9 @@ A responsive, accessible, and test-driven photo gallery application built with R
 
 > **Note:** In this demo, the `categories` array is populated by picking two random entries from `categoriesPool`. As a result, a photo’s assigned categories are purely illustrative and do not necessarily correspond to the actual content of the image.
 
-
 ## Live Demo
 
-Check out the deployed version here:  
+Check out the deployed version here:
 [photo-gallery-app](https://photo-gallery-app-mauve.vercel.app/)
 
 ---
@@ -27,7 +26,6 @@ Check out the deployed version here:
   * [Running in Development Mode](#running-in-development-mode)
   * [Building for Production](#building-for-production)
   * [Previewing the Production Build](#previewing-the-production-build)
-
 * [Mock Data](#mock-data)
 * [Testing](#testing)
 * [Architectural Decisions & Patterns](#architectural-decisions--patterns)
@@ -40,35 +38,44 @@ Check out the deployed version here:
 ## Features
 
 * **Photo Gallery**
+
   * Fetches a grid of photos from a public REST API (e.g., [Picsum.photos](https://picsum.photos/) or [JSONPlaceholder](https://jsonplaceholder.typicode.com/)).
-  * Displays photo thumbnails in a responsive, mobile-first grid.
-  * Implements infinite scroll (or pagination) to load more photos as the user scrolls.
-  * Shows basic metadata (title, author, upload date) with each thumbnail.
+  * Displays photo thumbnails in a responsive, mobile-first grid via the `<PhotoList>` and `<PhotoItem>` components.
+  * Implements infinite scroll through a custom `useInfiniteScroll` hook that loads more photos as the user scrolls.
+  * Shows basic metadata (title, author, upload date) with each thumbnail, falling back to “Photo by {author}” or “Uploaded: Unknown” when fields are missing.
 
 * **Photo Details Page**
+
   * Clicking on a thumbnail navigates to a detail view (React Router).
   * Displays the full-size image plus extended metadata (title, author, date, description).
-  * “Next” / “Previous” navigation buttons to cycle through photos without going back to the gallery.
+  * “Next” / “Previous” navigation buttons to cycle through photos without returning to the gallery.
 
 * **Search & Filter**
-  * Text-based search (by title or author).
-  * Filter dropdowns (e.g., by upload date range or category).
-  * Clear search and filter controls.
+
+  * Text-based search (by title or author) handled by a `useDebounce` hook and filtered via `usePhotoFilter`.
+  * Filter by category using a Radix UI combobox, hitting the branch where categories are mapped case-insensitively.
+  * Filter by upload date—uses string matching with `.startsWith(...)` against `photo.upload_date`.
+  * Clear search and filter controls reset all criteria and show the full photo list again.
 
 * **Responsive Design**
-  * Mobile-first CSS layout, works on phones, tablets, and desktops.
-  * Layout adapts from a single-column list on narrow screens to a multi-column grid on wider screens.
+
+  * Mobile-first CSS layout via Panda CSS, works on phones, tablets, and desktops.
+  * Grid adapts from a single column on narrow screens to multiple columns on wider screens.
 
 * **Error Handling & Loading States**
+
   * Graceful UI when the API call fails (error message and retry).
-  * Skeleton loaders or spinner indicators while fetching.
+  * Loading indicator “Loading more photos…” displayed when `loading=true`.
+  * “No more photos to load.” message when `hasMore=false` and not loading.
 
 * **Testing**
+
   * Jest & React Testing Library for unit and integration tests.
-  * Test coverage target: ≥ 90%.
-  * Mocks for REST API calls.
+  * Custom tests for components (`PhotoItem`, `PhotoList`) and hooks (`usePhotoFilter`, `useInfiniteScroll`).
+  * Coverage target: ≥ 90%.
 
 * **Code Quality**
+
   * TypeScript for type safety.
   * Panda CSS for utility-first styling (no class-name collisions).
 
@@ -77,30 +84,40 @@ Check out the deployed version here:
 ## Tech Stack
 
 * **Framework & Language**
+
   * React 18 + TypeScript
   * Vite (bundler & dev server)
 
 * **State Management & Data**
+
   * React Context API (`PhotoContext`)
-  * Custom React Hooks (`usePhotos`, `useDebounce`, etc.)
+  * Custom React Hooks
+
+    * `usePhotoFilter` (filters an array of `Photo`)
+    * `useInfiniteScroll` (sets up IntersectionObserver for infinite loading)
+    * `useDebounce` (debounces search input)
 
 * **Routing**
-  * React Router
+
+  * React Router v6
 
 * **Styling**
+
   * Panda CSS (utility-first, atomic-style approach)
   * Global resets & base styles in `index.css`
 
 * **Component Primitives**
-  * Radix UI
+
+  * Radix UI (Tooltip, Select/Combobox, Dialog)
 
 * **Testing**
+
   * Jest
   * React Testing Library
   * `@testing-library/jest-dom`
-  * Mocks for file imports and styling modules (see `__mocks__`)
 
 * **Tooling & Configuration**
+
   * Vite (`vite.config.ts`)
   * TypeScript (`tsconfig.json`)
   * ESLint + Prettier (`.eslintrc.js`)
@@ -114,7 +131,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-* Node.js ≥ 14.x  
+* Node.js ≥ 14.x
 * npm or Yarn installed
 
 ### Installation
@@ -124,6 +141,7 @@ These instructions will get you a copy of the project up and running on your loc
    ```bash
    git clone https://github.com/mkareshky/photo-gallery-app.git
    cd photo-gallery-app
+   ```
 
 2. **Install dependencies**
 
@@ -155,7 +173,7 @@ Generates an optimized build in the `dist/` folder.
 
 ### Previewing the Production Build
 
-After building, you can serve the `dist/` folder locally with a simple static server. For example:
+After building, you can serve the `dist/` folder locally with a simple static server:
 
 ```bash
 npx serve dist
@@ -194,6 +212,7 @@ const addMetadataToPhotos = (photos: Photo[]): Photo[] => {
 
 export default addMetadataToPhotos;
 ```
+
 ---
 
 ## Testing
@@ -218,54 +237,55 @@ npm run test:ci
 yarn test:ci
 ```
 
-* Runs tests a single time, outputs pass/fail summary.
-* Generates a coverage report (typically in `coverage/lcov-report/index.html`).
-* Coverage threshold is set to 80%. You can open the HTML report in your browser to inspect uncovered lines.
+* Runs tests a single time and outputs a pass/fail summary.
+* Generates a coverage report (in `coverage/lcov-report/index.html`).
+* Coverage threshold is set to 80%.
 
 ---
 
 ## Architectural Decisions & Patterns
 
 1. **SOLID Principles**
-   This project follows SOLID principles—each component or module has a single responsibility, and higher-level components depend on abstractions (hooks and context) rather than concrete implementations. For a deeper dive into each principle and how they’re applied here, see [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+   This project follows SOLID principles—each component or module has a single responsibility, and higher‐level components depend on abstractions (hooks and context) rather than concrete implementations. For a deeper dive into each principle and how they’re applied here, see [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
 2. **Repository Pattern & Data Layer**
 
-   * The `usePhotos.ts` hook encapsulates all REST API calls (fetching pages, applying filters).
-   * Helper functions (`addMetadataToPhotos.ts`, `generateRandomDate.ts`) isolate data transformations—including the mock-data logic that generates titles, dates, and categories.
-   * `PhotoContext.tsx` provides a global store for photo data, caching, and pagination state.
+   * The `PhotoApiRepository` implements `IPhotoRepository` to fetch pages, apply filters, and return `{ photos, hasMore }`.
+   * Helper functions (`addMetadataToPhotos.ts`, `generateRandomDate.ts`) isolate data transformations—including the mock‐data logic.
+   * `PhotoContext.tsx` provides a global store for photo data, caching, pagination state, and filter values.
 
 3. **Custom Hooks**
 
-   * `usePhotos` manages data fetching, pagination, caching, and error/loading states.
-   * `useDebounce` handles debouncing of search/filter inputs to prevent excessive API calls.
+   * `useInfiniteScroll` handles setting up and tearing down an `IntersectionObserver` for infinite loading.
+   * `usePhotoFilter` filters an array of `Photo` objects based on `searchTerm`, `category`, and `uploadDate`.
+   * `useDebounce` debounces search/filter inputs to prevent excessive re-renders.
 
 4. **Compound Components & Radix UI**
 
-   * In the `ui` folder, atomic UI pieces (e.g., `<CategorySelect>`, `<FilterPanel>`) can be composed in parent components.
-   * Radix primitives (Dialog, Select, Toast, etc.) ensure accessible dropdowns, modals, and notifications.
+   * In the `components/ui` folder, atomic UI pieces (e.g., `<CategorySelect>`, `<FilterPanel>`) can be composed in parent components.
+   * Radix primitives (Tooltip, Dialog, Select) ensure accessible dropdowns, dialogs, and tooltips.
 
 5. **Separation of Concerns**
 
-   * **UI Layer**: Presentational components (`PhotoCard`, `CategorySelect`, `FilterPanel`) live under `src/components` or `src/components/ui`.
-   * **Business Logic / Data Layer**: Hooks (`src/hooks/usePhotos.ts`) and helper functions (`src/helper/*.ts`) manage API calls, data transformations, and state.
-   * **Routing Layer**: `src/router/index.tsx` contains route definitions and layout-level boundaries (e.g., a common `<Layout>` with header/navigation).
+   * **UI Layer**: Presentational components (`PhotoItem`, `PhotoList`, `FilterPanel`) live under `src/components`.
+   * **Business Logic / Data Layer**: Hooks (`usePhotos.ts`, `usePhotoFilter.ts`) and helper functions (`helper/*.ts`) manage API calls, data transformations, and state.
+   * **Routing Layer**: `src/router/index.tsx` contains route definitions and layout boundaries (e.g., a common `<Layout>` with header/navigation).
 
 6. **TypeScript & Type Safety**
 
-   * Shared types live in `src/types/index.ts` (e.g., `Photo`, `PhotoMetadata`, `FilterOptions`).
+   * Shared types live in `src/types/index.ts` (e.g., `Photo`, `FilterCriteria`, `IPhotoRepository`).
    * All components and hooks are strongly typed—no use of `any`.
 
 7. **Panda CSS for Styling**
 
-   * Utility-first, atomic CSS classes auto-generated by Panda.
+   * Utility‐first, atomic CSS classes auto‐generated by Panda.
    * Global styles (resets, fonts) in `index.css`.
-   * Component-level styles are applied via Panda’s atomic class names (no separate `.css` modules).
+   * Component‐level styles are applied via Panda’s atomic class names (no separate `.css` modules).
 
 8. **Routing & Lazy Loading**
 
    * React Router v6’s `createBrowserRouter` is used.
-   * Code-splitting with `React.lazy` and `Suspense` for page components (`GalleryPage`, `PhotoDetailPage`) to minimize the initial bundle size.
+   * Code‐splitting with `React.lazy` and `Suspense` for page components (`GalleryPage`, `PhotoDetailPage`) to minimize the initial bundle size.
 
 ---
 
@@ -274,10 +294,10 @@ yarn test:ci
 We have implemented several accessibility features to comply with WCAG 2.1 A:
 
 * **Semantic HTML**
-  Proper use of `<header>`, `<main>`, `<section>`, `<nav>`, `<ul>`, `<li>`, `<button>`, `<dialog>`, etc.
+  Proper use of `<header>`, `<main>`, `<section>`, `<ul>`, `<li>`, `<button>`, etc.
 
 * **ARIA Attributes & Roles**
-  Where necessary (e.g., `<button aria-label="Close dialog">`).
+  Where necessary (e.g., `<button aria-label="Close dialog">`, `<select aria-label="Category">`).
 
 * **Keyboard Navigation**
   All interactive elements (buttons, links, form inputs) are reachable by Tab.
@@ -287,7 +307,7 @@ We have implemented several accessibility features to comply with WCAG 2.1 A:
   All text/background combinations ensure a minimum contrast ratio of 4.5:1.
 
 * **Accessible Dialog for Photo Details**
-  The `<Dialog>` component from Radix UI is used to provide focus trapping, ARIA roles, and screen-reader announcements.
+  The `<Dialog>` component from Radix UI provides focus trapping, ARIA roles, and screen‐reader announcements.
 
 ---
 
@@ -295,16 +315,16 @@ We have implemented several accessibility features to comply with WCAG 2.1 A:
 
 ```
 src/
-├── __mocks__/               # Mocks for Jest (images, CSS modules, styled-system)
+├── __mocks__/               # Mocks for Jest (images, CSS modules)
 ├── assets/                  # Raw images/icons or SVGs
 ├── components/              # Reusable UI components
 ├── context/                 # React Context (PhotoContext) for global state
 ├── helper/                  # Pure helper functions (data transformations, date utilities)
-├── hooks/                   # Custom React hooks (data fetching, debounce)
+├── hooks/                   # Custom React hooks (useInfiniteScroll, usePhotoFilter, useDebounce)
 ├── pages/                   # Route-level pages (GalleryPage, PhotoDetailPage)
 ├── router/                  # React Router configuration (createBrowserRouter)
-├── services/                # Service layer (PhotoService, repositories, etc.)
-├── types/                   # TypeScript interfaces/types
+├── services/                # Service layer (PhotoApiRepository, IPhotoRepository)
+├── types/                   # TypeScript interfaces/types (Photo, FilterCriteria, IPhotoRepository)
 ├── App.tsx                  # Root component (wraps Context + Router)
 ├── main.tsx                 # Entry point (renders <App /> to #root)
 └── index.css                # Global CSS resets & base styles
@@ -314,10 +334,17 @@ src/
 
 ## Scripts
 
-* `npm run dev` (or `yarn dev`): Starts the Vite dev server with hot module replacement.
-* `npm run build` (or `yarn build`): Bundles the app for production into the `dist/` folder.
-* `npm test`: Runs Jest in watch mode for continuous testing.
-* `npm run test:ci` (or `yarn test:ci`): Runs tests once, outputs results, and generates a coverage report.
+* **`npm run dev`** (or `yarn dev`):
+  Starts the Vite dev server with hot module replacement.
+
+* **`npm run build`** (or `yarn build`):
+  Bundles the app for production into the `dist/` folder.
+
+* **`npm test`**:
+  Runs Jest in watch mode for continuous testing.
+
+* **`npm run test:ci`** (or `yarn test:ci`):
+  Runs tests once, outputs results, and generates a coverage report.
 
 ---
 
