@@ -136,7 +136,7 @@ Follow these steps to set up the project locally.
    ```bash
    git clone https://github.com/mkareshky/photo-gallery-app.git
    cd photo-gallery-app
-````
+  ````
 
 2. **Install dependencies**
 
