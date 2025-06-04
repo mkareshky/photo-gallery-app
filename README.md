@@ -11,7 +11,7 @@ A responsive, accessible, and test-driven photo gallery application built with R
 ## Live Demo
 
 Check out the deployed version here:  
-[https://photo-gallery-app-mauve.vercel.app/](https://photo-gallery-app-mauve.vercel.app/)
+[https://photo-gallery-app-mauve.vercel.app/](./src/assets/guide.gif)
 
 ---
 
