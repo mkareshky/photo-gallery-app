@@ -4,6 +4,7 @@ A responsive, accessible, and test-driven photo gallery application built with R
 
 ---
 
+![How to use the app](./path/to/your-gif.gif)
 
 > **Note:** In this demo, the `categories` array is populated by picking two random entries from `categoriesPool`. As a result, a photo’s assigned categories are purely illustrative and do not necessarily correspond to the actual content of the image.
 
@@ -11,7 +12,7 @@ A responsive, accessible, and test-driven photo gallery application built with R
 ## Live Demo
 
 Check out the deployed version here:  
-[https://photo-gallery-app-mauve.vercel.app/](./src/assets/guide.gif)
+[https://photo-gallery-app-mauve.vercel.app/](photo-gallery-app)
 
 ---
 
@@ -297,13 +298,12 @@ src/
 ├── __mocks__/               # Mocks for Jest (images, CSS modules, styled-system)
 ├── assets/                  # Raw images/icons or SVGs
 ├── components/              # Reusable UI components
-│   ├── ui/                  # Lower-level, atomic UI primitives
-│   └── PhotoCard.tsx
 ├── context/                 # React Context (PhotoContext) for global state
 ├── helper/                  # Pure helper functions (data transformations, date utilities)
 ├── hooks/                   # Custom React hooks (data fetching, debounce)
 ├── pages/                   # Route-level pages (GalleryPage, PhotoDetailPage)
 ├── router/                  # React Router configuration (createBrowserRouter)
+├── services/                # Service layer (PhotoService, repositories, etc.)
 ├── types/                   # TypeScript interfaces/types
 ├── App.tsx                  # Root component (wraps Context + Router)
 ├── main.tsx                 # Entry point (renders <App /> to #root)

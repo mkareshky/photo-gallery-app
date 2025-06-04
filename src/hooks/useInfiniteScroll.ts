@@ -1,5 +1,4 @@
-// src/hooks/useInfiniteScroll.ts (ویرایش جزئی)
-// فقط Observer را بساز و برگردان
+// src/hooks/useInfiniteScroll.ts
 import { useEffect, useRef, useCallback } from "react";
 
 export interface UseInfiniteScrollOptions {

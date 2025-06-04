@@ -28,16 +28,11 @@ describe("PhotoItem component", () => {
       </MemoryRouter>
     );
 
-    // بخش عنوان
     expect(screen.getByText(/Test Title/i)).toBeInTheDocument();
-    // بخش نویسنده
     expect(screen.getByText(/Author:\s*Jane Doe/i)).toBeInTheDocument();
 
-    // بخش تاریخ: به‌جای تلاش برای منطبق‌کردن دقیق "5/5/2021"،
-    // از این regex استفاده می‌کنیم تا هر عدد/عدد/2021 را بگیرد.
     expect(screen.getByText(/Uploaded:.*2021/)).toBeInTheDocument();
 
-    // لینک باید به `/photos/42` اشاره کند
     const link = screen.getByRole("link");
     expect(link).toHaveAttribute("href", "/photos/42");
   });
@@ -55,7 +50,6 @@ describe("PhotoItem component", () => {
         <PhotoItem photo={noTitle} />
       </MemoryRouter>
     );
-    // چون title === ""، باید "Photo by Zed" نمایش داده شود
     expect(screen.getByText(/Photo by Zed/i)).toBeInTheDocument();
   });
 
