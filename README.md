@@ -334,7 +334,6 @@ src/
 ├── router/                       # React Router configuration
 ├── services/                     # Service / Repository layer
 ├── types/                        # TypeScript types & interfaces
-│   └── index.ts                  # Photo, FilterCriteria, categoriesPool, etc.
 ├── main.tsx                      # Entry point (renders <RouterProvider> under Contexts)
 ├── index.css                     # Global CSS resets & base styles
 └── vite.config.ts                # Vite configuration
