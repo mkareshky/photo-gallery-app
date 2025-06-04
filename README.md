@@ -10,7 +10,7 @@ A responsive, accessible, and test-driven photo gallery application built with R
 
 ## Live Demo
 
-Check out the deployed version here:
+Check out the deployed version here:  
 [photo-gallery-app](https://photo-gallery-app-mauve.vercel.app/)
 
 ---
@@ -20,7 +20,6 @@ Check out the deployed version here:
 * [Features](#features)
 * [Tech Stack](#tech-stack)
 * [Getting Started](#getting-started)
-
   * [Prerequisites](#prerequisites)
   * [Installation](#installation)
   * [Running in Development Mode](#running-in-development-mode)
@@ -39,88 +38,85 @@ Check out the deployed version here:
 
 ### Photo Gallery
 
-* **Fetch & Display**
+* **Fetch & Display**  
   Retrieves a grid of photos from a public REST API (e.g., [Picsum.photos](https://picsum.photos/) or [JSONPlaceholder](https://jsonplaceholder.typicode.com/)).
-* **Infinite Scroll**
-  Custom `useInfiniteScroll` hook sets up an `IntersectionObserver` to load more photos as the user scrolls.
-* **Search & Filter**
 
-  * Text-based search (by title or author) is debounced via `useDebounce` and filtered by `usePhotoFilter`.
-  * Filter by category (Radix UI combobox) and by upload date (string-based).
-  * Clear controls reset all criteria and show the full photo list again.
-* **Responsive Layout**
+* **Infinite Scroll**  
+  Custom `useInfiniteScroll` hook sets up an `IntersectionObserver` to load more photos as the user scrolls.  
+  - The observer logic is consolidated into a single `useEffect`, which attaches or detaches the sentinel observer based on `loading`, `hasMore`, and `isFiltering` state, ensuring that filters correctly disable infinite scroll without redundant unobservations.
+
+* **Search & Filter**  
+  - Text-based search (by title or author) is debounced via `useDebounce` and filtered by `usePhotoFilter`.  
+  - Filter by category (Radix UI combobox) and by upload date (native `<input type="date" />`).  
+  - Clear controls reset all criteria and show the full photo list again.
+
+* **Fallback Title Logic**  
+  If a photo’s `title` is an empty string, the UI displays a fallback such as “Photo by {author}” inside `<PhotoCard>`, ensuring every card always shows a meaningful title.
+
+* **Responsive Layout**  
   CSS is written with Panda CSS utility classes. The grid adapts from one column on small screens to multiple columns on larger devices.
-* **Error & Loading States**
 
-  * Shows a “Loading more photos…” indicator while fetching.
-  * Displays “No more photos to load.” once `hasMore=false`.
-  * Graceful fallback on API errors with a retry button.
+* **Error & Loading States**  
+  - Shows a “Loading more photos…” indicator while fetching more pages.  
+  - Displays “No more photos to load.” once `hasMore=false`.  
+  - Graceful fallback on API errors with a retry button.
 
 ### Photo Details Page
 
-* **Routing**
+* **Routing**  
   Clicking a thumbnail navigates to a detail view via React Router v6.
-* **Metadata**
-  Displays full-size image plus extended metadata (title, author, upload date, categories, etc.).
-* **Next/Previous Navigation**
-  `<PhotoNavigationButtons>` component cycles through photos without returning to the gallery.
-* **Repository Pattern**
-  A `PhotoService` class implements `IPhotoRepository` (getPhotos, getPhotoById, getNextPhotoId, getPrevPhotoId). This abstraction ensures UI components depend on an interface, not on concrete API calls.
+
+* **Metadata**  
+  Displays full-size image plus extended metadata (title, author, upload date, categories, etc.). If `title` is missing, the fallback logic ensures “Photo by {author}” appears.
+
+* **Next/Previous Navigation**  
+  `<PhotoNavigationButtons>` component cycles through photos without returning to the gallery, using wrap-around logic in `PhotoService`.
+
+* **Repository Pattern**  
+  A `PhotoService` class implements `IPhotoRepository` (`getPhotos`, `getPhotoById`, `getNextPhotoId`, `getPrevPhotoId`). This abstraction ensures UI components depend on an interface, not on concrete API calls.
 
 ### Lazy Loading Images
 
-* `<LazyImage>` component uses `IntersectionObserver` to only load `<img>` when it scrolls into view.
+* `<LazyImage>` component uses `IntersectionObserver` to only load `<img>` when it scrolls into view.  
 * Before the image is visible, a placeholder `<div>` of configurable height/background is rendered.
-
-### Accessibility
-
-* **Semantic HTML & ARIA**
-  Proper use of `<header>`, `<main>`, `<section>`, `<nav>`, and `<button>` with appropriate ARIA labels (e.g., `aria-label="Photo navigation"`).
-* **Keyboard Navigation**
-  All interactive elements (buttons, links, inputs) are focusable via Tab with visible focus styles.
-* **Color Contrast**
-  All text/background combos meet a minimum 4.5:1 contrast ratio.
-* **Responsive Dialog (Radix UI)**
-  The `<Dialog>` used in Photo Details handles focus trapping, ARIA roles, and announcements for screen readers.
 
 ---
 
 ## Tech Stack
 
-* **Framework & Language**
-
-  * React 18 + TypeScript
+* **Framework & Language**  
+  * React 18 + TypeScript  
   * Vite (bundler & dev server)
-* **State & Data Layer**
 
-  * React Context API (`PhotoContext` + `PhotoRepositoryContext`)
-  * Repository Pattern (`IPhotoRepository` + `PhotoService`)
+* **State & Data Layer**  
+  * React Context API (`PhotoContext` + `PhotoRepositoryContext`)  
+  * Repository Pattern (`IPhotoRepository` + `PhotoService`)  
   * Helper functions (`addMetadataToPhotos.ts`, `generateRandomDate.ts`)
-* **Custom Hooks**
 
-  * `useInfiniteScroll` (IntersectionObserver)
-  * `usePhotoFilter` (text/category/date filters)
+* **Custom Hooks**  
+  * `useInfiniteScroll` (IntersectionObserver)  
+  * `usePhotoFilter` (text/category/date filters)  
   * `useDebounce` (search input)
-* **Routing**
 
+* **Routing**  
   * React Router v6 (`src/router/index.tsx`)
-* **Styling**
 
-  * Panda CSS (utility-first)
+* **Styling**  
+  * Panda CSS (utility-first)  
   * Global resets & base styles in `index.css`
-* **Component Primitives**
 
+* **Component Primitives**  
   * Radix UI (Select/Combobox, Dialog, Tooltip)
-* **Testing**
 
-  * Jest
-  * React Testing Library
-  * `@testing-library/jest-dom`
+* **Testing**  
+  * Jest  
+  * React Testing Library  
+  * `@testing-library/jest-dom`  
   * Custom tests cover components (`LazyImage`, `PhotoNavigationButtons`, `PhotoItem`, `PhotoList`), services (`PhotoService`), hooks, and context providers
-* **Tooling**
 
-  * ESLint + Prettier
-  * TypeScript (`tsconfig.json`)
+* **Tooling**  
+  * ESLint + Prettier  
+  * TypeScript (`tsconfig.json`)  
   * Jest config (`jest.config.cjs`, `jest.setup.js`)
 
 ---
@@ -131,17 +127,17 @@ Follow these steps to set up the project locally.
 
 ### Prerequisites
 
-* Node.js ≥ 14.x
+* Node.js ≥ 14.x  
 * npm or Yarn installed
 
 ### Installation
 
 1. **Clone the repository**
-
    ```bash
    git clone https://github.com/mkareshky/photo-gallery-app.git
    cd photo-gallery-app
-   ```
+````
+
 2. **Install dependencies**
 
    ```bash
@@ -196,7 +192,8 @@ import generateRandomDate from "./generateRandomDate";
 const addMetadataToPhotos = (photos: Photo[]): Photo[] =>
   photos.map(photo => ({
     ...photo,
-    title: `Photo by ${photo.author}`,
+    // Fallback title logic: always “Photo by {author}” if original title is empty
+    title: photo.title || `Photo by ${photo.author}`,
     upload_date: generateRandomDate(),
     categories: [
       categoriesPool[Math.floor(Math.random() * categoriesPool.length)],
@@ -264,32 +261,37 @@ yarn test:ci
 
 3. **Custom Hooks**
 
-   * **`useInfiniteScroll`**: Sets up `IntersectionObserver` for paging.
+   * **`useInfiniteScroll`**: Consolidated `IntersectionObserver` logic into one `useEffect` for attaching/detaching the sentinel.
    * **`usePhotoFilter`**: Filters based on search term, selected category, and upload date.
    * **`useDebounce`**: Prevents excessive re-rendering for text inputs.
 
-4. **Compound Components & Radix UI**
+4. **Fallback Title Handling**
+
+   * Inside `<PhotoCard>` (and `<PhotoList>`), if `photo.title` is falsy, display `"Photo by {photo.author}"` to ensure every card shows a title.
+
+5. **Compound Components & Radix UI**
 
    * UI components like `<CategorySelect>` (Radix Combobox) and `<FilterPanel>` are composed in `<GalleryPage>`.
    * Radix primitives (Tooltip, Dialog, Select) ensure accessible dropdowns/dialogs.
+   * The category filter is implemented with `role="combobox"` and an accessible label “All Categories,” and the date filter uses a native `<input type="date" />` for compatibility with testing and screen readers.
 
-5. **Separation of Concerns**
+6. **Separation of Concerns**
 
    * **UI Layer**: Presentational components (`PhotoItem`, `PhotoList`, `FilterPanel`) under `src/components`.
    * **Business Logic / Data Layer**: Hooks (`usePhotos.ts`, `usePhotoFilter.ts`) and helpers (`addMetadataToPhotos.ts`, `generateRandomDate.ts`) under `src/hooks` and `src/helper`.
    * **Routing Layer**: `src/router/index.tsx` contains route definitions, wrapped by `PhotoProvider` and `PhotoRepositoryProvider`.
 
-6. **TypeScript & Type Safety**
+7. **TypeScript & Type Safety**
 
    * Shared types live in `src/types/index.ts` (e.g., `Photo`, `FilterCriteria`, `IPhotoRepository`).
    * No use of `any`—all components and hooks are strongly typed.
 
-7. **Panda CSS for Styling**
+8. **Panda CSS for Styling**
 
    * Atomic utility classes generated by Panda CSS.
    * Global resets and base typography in `index.css`.
 
-8. **Lazy Loading & Performance**
+9. **Lazy Loading & Performance**
 
    * `<LazyImage>` uses an `IntersectionObserver` polyfill in tests and native API in browsers to defer loading offscreen images.
    * Code splitting via `React.lazy` & `Suspense` for `<GalleryPage>` and `<PhotoDetailPage>`.
@@ -300,14 +302,19 @@ yarn test:ci
 
 * **Semantic Markup**
   Proper use of `<header>`, `<main>`, `<section>`, `<article>`, `<nav>`, `<button>`, and `<ul>/<li>`.
+
 * **ARIA Attributes**
 
   * `<nav aria-label="Photo navigation">` for the previous/next buttons.
   * `<button aria-label="Clear Filters">` on filter controls.
+  * `<div role="combobox" aria-label="All Categories">` for the category selector.
+
 * **Keyboard Navigation**
   All interactive elements are reachable via Tab; focus states are visible.
+
 * **Color Contrast**
   All text/background combinations meet at least 4.5:1 contrast.
+
 * **Accessible Dialog**
   The Radix `<Dialog>` used in Photo Details provides focus trapping, ARIA roles, and announcements.
 
@@ -341,12 +348,16 @@ src/
 
 * **`npm run dev`** (or `yarn dev`)
   Starts Vite dev server with HMR ([http://localhost:5173](http://localhost:5173)).
+
 * **`npm run build`** (or `yarn build`)
   Bundles for production into `dist/`.
+
 * **`npm run serve`** (or `yarn serve`)
   Serves `dist/` folder locally (if you have `serve` installed).
+
 * **`npm test`**
   Runs Jest in watch mode.
+
 * **`npm run test:ci`** (or `yarn test:ci`)
   Runs all tests once and generates a coverage report.
 
