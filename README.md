@@ -4,7 +4,7 @@ A responsive, accessible, and test-driven photo gallery application built with R
 
 ---
 
-![How to use the app](https://fv5-3.files.fm/thumb_show.php?i=6sjxp23swp&view&v=1&PHPSESSID=b25574e262916c31873cf4098f5c5c51366a8814)
+![How to use the app](./src/assets/guide.gif)
 
 > **Note:** In this demo, the `categories` array is populated by picking two random entries from `categoriesPool`. As a result, a photo’s assigned categories are purely illustrative and do not necessarily correspond to the actual content of the image.
 
