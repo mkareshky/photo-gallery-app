@@ -1,26 +1,22 @@
 // src/pages/GalleryPage.tsx
 import React, { useEffect, useState } from "react";
 import { css } from "../styled-system/css";
-import { usePhotoContext, PhotoContextTypeWithRetry } from "../context/PhotoContext";
+import { usePhotoContext } from "../context/PhotoContext";
 import { FilterPanel } from "../components/FilterPanel";
 import { useDebounce } from "../hooks/useDebounce";
-import { useInfiniteScroll } from "../hooks/useInfiniteScroll";
+import { useConditionalInfiniteScroll } from "../hooks/useConditionalInfiniteScroll";
 import { usePhotoFilter } from "../hooks/usePhotoFilter";
 import { PhotoList } from "../components/PhotoList";
+import { ErrorDisplay } from "../components/ErrorDisplay";
 
 const GalleryPage: React.FC = () => {
-  const { photos, loading, error, loadMore, hasMore, retry } = usePhotoContext() as PhotoContextTypeWithRetry;
+  const { photos, loading, error, loadMore, hasMore } = usePhotoContext();
 
   const [rawSearchTerm, setRawSearchTerm] = useState<string>("");
   const [category, setCategory] = useState<string>("all");
   const [uploadDate, setUploadDate] = useState<string>("");
 
   const debouncedSearchTerm = useDebounce(rawSearchTerm, 500);
-
-  const [filterKey, setFilterKey] = useState<number>(0);
-  useEffect(() => {
-    setFilterKey((prev) => prev + 1);
-  }, [debouncedSearchTerm, category, uploadDate]);
 
   const isFiltering =
     debouncedSearchTerm !== "" || category !== "all" || uploadDate !== "";
@@ -31,61 +27,10 @@ const GalleryPage: React.FC = () => {
     uploadDate,
   });
 
-  const { sentinelRef, observerRef } = useInfiniteScroll({
-    hasMore,
-    loading,
-    onLoadMore: loadMore,
-  });
-
-  useEffect(() => {
-    if (observerRef.current && sentinelRef.current) {
-      observerRef.current.unobserve(sentinelRef.current);
-    }
-  }, [filterKey, observerRef, sentinelRef]);
-
-  useEffect(() => {
-    const observer = observerRef.current;
-    const sentinel = sentinelRef.current;
-    if (!observer || !sentinel) return;
-
-    if (!isFiltering && !loading && photos.length > 0 && hasMore) {
-      observer.observe(sentinel);
-    }
-
-    return () => {
-      if (observer && sentinel) {
-        observer.unobserve(sentinel);
-      }
-    };
-  }, [loading, photos.length, hasMore, filterKey, isFiltering, observerRef, sentinelRef]);
+  const sentinelRef = useConditionalInfiniteScroll(loadMore, hasMore, loading, isFiltering);
 
   if (error) {
-    return (
-      <main className={css({ p: "6", textAlign: "center" })}>
-        <p className={css({ fontSize: "lg", color: "red.600", mb: "4" })}>
-          {error}
-        </p>
-        <button
-          onClick={retry}
-          className={css({
-            px: "4",
-            py: "2",
-            bg: "blue.600",
-            color: "white",
-            rounded: "md",
-            _hover: { bg: "blue.700" },
-            _focusVisible: {
-              outline: "2px solid",
-              outlineColor: "blue.300",
-              outlineOffset: "2px",
-            },
-            cursor: "pointer",
-          })}
-        >
-          Retry
-        </button>
-      </main>
-    );
+    return <ErrorDisplay message={error} />;
   }
 
   return (

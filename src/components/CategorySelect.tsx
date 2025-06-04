@@ -68,7 +68,12 @@ export const CategorySelect = ({ category, onCategoryChange }: CategorySelectPro
 
   return (
     <Select.Root value={category} onValueChange={onCategoryChange}>
-      <Select.Trigger aria-label={currentLabel} className={categorySelect} role="combobox">
+      <Select.Trigger
+        aria-label={currentLabel}
+        aria-controls="category-options"
+        className={categorySelect}
+        role="combobox"
+      >
         <Select.Value placeholder="Select category" />
         <Select.Icon>
           <ChevronDownIcon />
@@ -76,7 +81,7 @@ export const CategorySelect = ({ category, onCategoryChange }: CategorySelectPro
       </Select.Trigger>
 
       <Select.Portal>
-        <Select.Content className={categorySelectContent}>
+        <Select.Content className={categorySelectContent} id="category-options">
           <Select.Viewport>
             {categoryValues.map(({ label, value }) => (
               <Select.Item

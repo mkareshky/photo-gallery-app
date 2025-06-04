@@ -10,6 +10,10 @@ export interface FilterCriteria {
 export function usePhotoFilter(photos: Photo[], { searchTerm, category, uploadDate }: FilterCriteria) {
   const term = searchTerm.toLowerCase();
 
+  // Accept “YYYY”, “YYYY-MM”, or “YYYY-MM-DD”
+  const partialDatePattern = /^\d{4}(-\d{2}){0,2}$/;
+  const isValidPartialDate = partialDatePattern.test(uploadDate);
+
   return photos.filter((photo: Photo) => {
     const matchesSearch =
       (photo.title || "").toLowerCase().includes(term) ||
@@ -19,10 +23,10 @@ export function usePhotoFilter(photos: Photo[], { searchTerm, category, uploadDa
       category === "all"
         ? true
         : (photo.categories || [])
-            .map((c) => c.toLowerCase())
-            .includes(category.toLowerCase());
+          .map((c) => c.toLowerCase())
+          .includes(category.toLowerCase());
 
-    const matchesDate = uploadDate
+    const matchesDate = isValidPartialDate
       ? (photo.upload_date || "").startsWith(uploadDate)
       : true;
 
