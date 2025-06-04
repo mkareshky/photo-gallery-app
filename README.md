@@ -4,7 +4,7 @@ A responsive, accessible, and test-driven photo gallery application built with R
 
 ---
 
-![How to use the app](./path/to/your-gif.gif)
+![How to use the app](./src/assets/guide.gif)
 
 > **Note:** In this demo, the `categories` array is populated by picking two random entries from `categoriesPool`. As a result, a photo’s assigned categories are purely illustrative and do not necessarily correspond to the actual content of the image.
 
@@ -12,7 +12,7 @@ A responsive, accessible, and test-driven photo gallery application built with R
 ## Live Demo
 
 Check out the deployed version here:  
-[https://photo-gallery-app-mauve.vercel.app/](photo-gallery-app)
+[photo-gallery-app](https://photo-gallery-app-mauve.vercel.app/)
 
 ---
 
