@@ -1,3 +1,4 @@
+// src/heper/addMetadataToPhotos.ts
 import { categoriesPool, type Photo } from "../types";
 import generateRandomDate from "./generateRandomDate";
 

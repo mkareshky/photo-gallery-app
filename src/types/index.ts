@@ -1,3 +1,4 @@
+// src/types/index.ts
 export interface Photo {
   id: string;
   author: string;
@@ -22,6 +23,7 @@ export interface PhotoContextType {
   error: string | null;
   loadMore: () => void;
   hasMore: boolean;
+  retry: () => void;
 }
 
 export interface PhotoCardProps {

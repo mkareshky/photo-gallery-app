@@ -1,4 +1,4 @@
-// __tests__/usePhotoFilter.test.ts
+// src/hooks/__tests__/usePhotoFilter.test.ts
 
 import { usePhotoFilter, FilterCriteria } from "../usePhotoFilter";
 import type { Photo } from "../../../src/types";

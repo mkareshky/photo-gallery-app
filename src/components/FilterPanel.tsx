@@ -1,3 +1,4 @@
+// src/components/FilterPanel.tsx
 import React from "react";
 import { css } from "../styled-system/css";
 import { CategorySelect } from "./CategorySelect";

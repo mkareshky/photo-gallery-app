@@ -1,4 +1,4 @@
-// __tests__/PhotoList.test.tsx
+// src/components/__tests__/PhotoList.test.tsx
 /**
  * @jest-environment jsdom
  */

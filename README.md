@@ -293,8 +293,8 @@ yarn test:ci
 
 9. **Lazy Loading & Performance**
 
+   * `<GalleryPage>` and `<PhotoDetailPage>` are dynamically loaded using `React.lazy` and `Suspense` to reduce the initial bundle size.
    * `<LazyImage>` uses an `IntersectionObserver` polyfill in tests and native API in browsers to defer loading offscreen images.
-   * Code splitting via `React.lazy` & `Suspense` for `<GalleryPage>` and `<PhotoDetailPage>`.
 
 ---
 

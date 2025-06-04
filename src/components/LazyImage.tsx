@@ -1,3 +1,4 @@
+// src/components/CategorySelect.tsx
 import React, { useRef, useState, useEffect } from "react";
 
 interface LazyImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {

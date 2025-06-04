@@ -1,3 +1,4 @@
+// src/context/__tests__/PhotoContext.test.tsx
 /**
  * @jest-environment jsdom
  */

@@ -1,3 +1,4 @@
+// src/__tests__/main.test.tsx
 /**
  * @jest-environment jsdom
  */

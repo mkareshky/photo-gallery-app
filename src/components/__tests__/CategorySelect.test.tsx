@@ -1,3 +1,4 @@
+// src/components/__tests__/CategorySelect.test.tsx
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { CategorySelect } from "../CategorySelect";

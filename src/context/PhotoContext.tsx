@@ -1,15 +1,20 @@
+// src/context/PhotoContext.tsx
 import React, { createContext, useContext } from "react";
 import { usePhotos } from "../hooks/usePhotos";
 import type { PhotoContextType } from "../types";
 
+export interface PhotoContextTypeWithRetry extends PhotoContextType {
+  retry: () => void;
+}
 
-export const PhotoContext = createContext<PhotoContextType | undefined>(undefined);
+export const PhotoContext = createContext<PhotoContextTypeWithRetry | undefined>(undefined);
 
 export const PhotoProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { photos, loading, error, loadMore, hasMore } = usePhotos();
+
+  const { photos, loading, error, loadMore, hasMore, retry } = usePhotos();
 
   return (
-    <PhotoContext.Provider value={{ photos, loading, error, loadMore, hasMore }}>
+    <PhotoContext.Provider value={{ photos, loading, error, loadMore, hasMore, retry }}>
       {children}
     </PhotoContext.Provider>
   );

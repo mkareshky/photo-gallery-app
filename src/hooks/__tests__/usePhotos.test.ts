@@ -1,3 +1,4 @@
+// src/hooks/__tests__/usePhotos.test.ts
 import { renderHook, waitFor, act } from '@testing-library/react';
 import axios from 'axios';
 import { usePhotos } from '../usePhotos';
@@ -13,161 +14,156 @@ const mockPhotos = [{ id: '1', author: 'Author1' }];
 const enhancedPhotos = [{ id: '1', author: 'Author1', title: 'Photo by Author1' }];
 
 beforeAll(() => {
-    jest.spyOn(console, 'error').mockImplementation(() => { });
+  jest.spyOn(console, 'error').mockImplementation(() => {});
 });
 
 afterAll(() => {
-    jest.restoreAllMocks();
+  jest.restoreAllMocks();
 });
 
 describe('usePhotos', () => {
-    beforeEach(() => {
-        mockedAxios.get.mockReset();
-        mockedAddMetadataToPhotos.mockReset();
-        mockedAddMetadataToPhotos.mockReturnValue(enhancedPhotos);
+  beforeEach(() => {
+    mockedAxios.get.mockReset();
+    mockedAddMetadataToPhotos.mockReset();
+    mockedAddMetadataToPhotos.mockReturnValue(enhancedPhotos);
+  });
+
+  test('fetches initial photos successfully', async () => {
+    mockedAxios.get.mockResolvedValue({ data: mockPhotos });
+    mockedAddMetadataToPhotos.mockReturnValue(enhancedPhotos);
+
+    const { result } = renderHook(() => usePhotos());
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    expect(result.current.photos).toEqual(enhancedPhotos);
+  });
+
+  test('handles empty data response correctly', async () => {
+    mockedAxios.get.mockResolvedValue({ data: [] });
+
+    const { result } = renderHook(() => usePhotos());
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    expect(result.current.photos).toEqual([]);
+    expect(result.current.hasMore).toBe(false);
+  });
+
+  test('handles fetch error correctly', async () => {
+    mockedAxios.get.mockRejectedValueOnce(new Error('Network Error'));
+
+    const { result } = renderHook(() => usePhotos());
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    expect(result.current.error).toBe('Failed to fetch photos. Please try again later.');
+  });
+
+  test('retry clears error and refetches successfully', async () => {
+    mockedAxios.get.mockRejectedValueOnce(new Error('Network Failure'));
+
+    const { result } = renderHook(() => usePhotos());
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    expect(result.current.error).toBe('Failed to fetch photos. Please try again later.');
+
+    mockedAxios.get.mockResolvedValueOnce({ data: mockPhotos });
+    mockedAddMetadataToPhotos.mockReturnValue(enhancedPhotos);
+
+    act(() => {
+      result.current.retry();
     });
 
-    test('fetches initial photos successfully', async () => {
-        mockedAxios.get.mockResolvedValue({ data: mockPhotos });
-        mockedAddMetadataToPhotos.mockReturnValue(enhancedPhotos); // explicitly defined here
+    await waitFor(() => expect(result.current.loading).toBe(false));
 
-        const { result } = renderHook(() => usePhotos());
+    expect(result.current.error).toBeNull();
+    expect(result.current.photos).toEqual(enhancedPhotos);
+    expect(result.current.hasMore).toBe(true);
+  });
 
-        await waitFor(() => expect(result.current.loading).toBe(false));
+  test('prevents fetching already fetched page', async () => {
+    mockedAxios.get.mockResolvedValue({ data: mockPhotos });
+    mockedAddMetadataToPhotos.mockReturnValue(enhancedPhotos);
 
-        expect(result.current.photos).toEqual(enhancedPhotos);
+    const { result } = renderHook(() => usePhotos());
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    // loadMore (page=2)
+    await act(async () => {
+      result.current.loadMore();
     });
 
-    test('handles empty data response correctly', async () => {
-        mockedAxios.get.mockResolvedValue({ data: [] });
+    await waitFor(() => expect(result.current.loading).toBe(false));
 
-        const { result } = renderHook(() => usePhotos());
-
-        await waitFor(() => expect(result.current.loading).toBe(false));
-
-        expect(result.current.photos).toEqual([]);
-        expect(result.current.hasMore).toBe(false);
+    await act(async () => {
+      result.current.loadMore();
     });
 
-    test('handles fetch error correctly', async () => {
-        mockedAxios.get.mockRejectedValueOnce(new Error('Network Error'));
+    await waitFor(() => expect(result.current.loading).toBe(false));
 
-        const { result } = renderHook(() => usePhotos());
+    expect(mockedAxios.get).toHaveBeenCalledTimes(3);
 
-        await waitFor(() => expect(result.current.loading).toBe(false));
-
-        expect(result.current.error).toBe('Failed to fetch photos. Please try again later.');
+    await act(async () => {
+      result.current.loadMore();
     });
 
-    test('prevents fetching already fetched page', async () => {
-        mockedAxios.get.mockResolvedValue({ data: mockPhotos });
-        mockedAddMetadataToPhotos.mockReturnValue(enhancedPhotos);
+    await waitFor(() => expect(result.current.loading).toBe(false));
 
-        const { result } = renderHook(() => usePhotos());
+    expect(mockedAxios.get).toHaveBeenCalledTimes(4);
 
-        // Wait for initial load (page 1)
-        await waitFor(() => expect(result.current.loading).toBe(false));
+    expect(mockedAxios.get.mock.calls[0][0]).toContain('page=1');
+    expect(mockedAxios.get.mock.calls[1][0]).toContain('page=2');
+    expect(mockedAxios.get.mock.calls[2][0]).toContain('page=3');
+    expect(mockedAxios.get.mock.calls[3][0]).toContain('page=4');
+  });
 
-        // Load more (page 2)
-        await act(async () => {
-            result.current.loadMore();
-        });
+  test('loadMore increments page and fetches correctly', async () => {
+    mockedAxios.get.mockResolvedValue({ data: mockPhotos });
+    mockedAddMetadataToPhotos.mockReturnValue(enhancedPhotos);
 
-        await waitFor(() => expect(result.current.loading).toBe(false));
+    const { result } = renderHook(() => usePhotos());
 
-        // Try loading the same page again; should not fetch again (page 2)
-        await act(async () => {
-            result.current.loadMore(); // page 3, actually
-        });
+    await waitFor(() => expect(result.current.loading).toBe(false));
 
-        await waitFor(() => expect(result.current.loading).toBe(false));
-
-        // Expect 3 fetches (page 1, page 2, page 3)
-        expect(mockedAxios.get).toHaveBeenCalledTimes(3);
-
-        // Now explicitly verify fetching the same page again won't trigger another fetch
-        await act(async () => {
-            result.current.loadMore(); // Attempting page 4
-        });
-
-        await waitFor(() => expect(result.current.loading).toBe(false));
-
-        expect(mockedAxios.get).toHaveBeenCalledTimes(4); // clearly shows increment
-
-        // Ensure the internal set has correctly tracked pages:
-        expect(mockedAxios.get.mock.calls[0][0]).toContain('page=1');
-        expect(mockedAxios.get.mock.calls[1][0]).toContain('page=2');
-        expect(mockedAxios.get.mock.calls[2][0]).toContain('page=3');
-        expect(mockedAxios.get.mock.calls[3][0]).toContain('page=4');
+    await act(async () => {
+      result.current.loadMore();
     });
 
-    test('loadMore increments page and fetches correctly', async () => {
-        mockedAxios.get.mockResolvedValue({ data: mockPhotos });
-        mockedAddMetadataToPhotos.mockReturnValue(enhancedPhotos);
+    await waitFor(() => expect(result.current.loading).toBe(false));
 
-        const { result } = renderHook(() => usePhotos());
+    expect(mockedAxios.get).toHaveBeenCalledWith(expect.stringContaining('page=2'));
+    expect(result.current.photos.length).toBeGreaterThan(0);
+  });
 
-        await waitFor(() => expect(result.current.loading).toBe(false));
+  test('loadMore does nothing if hasMore is false', async () => {
+    mockedAxios.get.mockResolvedValue({ data: [] });
 
-        // Trigger loading more explicitly wrapped in act
-        await act(async () => {
-            result.current.loadMore();
-        });
+    const { result } = renderHook(() => usePhotos());
 
-        await waitFor(() => expect(result.current.loading).toBe(false));
+    await waitFor(() => expect(result.current.loading).toBe(false));
 
-        expect(mockedAxios.get).toHaveBeenCalledWith(expect.stringContaining('page=2'));
-        expect(result.current.photos.length).toBeGreaterThan(0);
+    expect(result.current.hasMore).toBe(false);
+
+    act(() => result.current.loadMore());
+
+    expect(mockedAxios.get).toHaveBeenCalledTimes(1);
+  });
+
+  test('does not refetch a page that has already been fetched', async () => {
+    mockedAxios.get.mockResolvedValue({ data: mockPhotos });
+    mockedAddMetadataToPhotos.mockReturnValue(enhancedPhotos);
+
+    const { result } = renderHook(() => usePhotos());
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    await act(async () => {
+      await result.current.fetchPhotos(1);
     });
 
-    test('loadMore does nothing if hasMore is false', async () => {
-        mockedAxios.get.mockResolvedValue({ data: [] });
-
-        const { result } = renderHook(() => usePhotos());
-
-        await waitFor(() => expect(result.current.loading).toBe(false));
-
-        expect(result.current.hasMore).toBe(false);
-
-        act(() => result.current.loadMore());
-
-        expect(mockedAxios.get).toHaveBeenCalledTimes(1); // should not fetch again
-    });
-
-    test('does not refetch a page that has already been fetched', async () => {
-        mockedAxios.get.mockResolvedValue({ data: mockPhotos });
-        mockedAddMetadataToPhotos.mockReturnValue(enhancedPhotos);
-
-        const { result } = renderHook(() => usePhotos());
-
-        // Wait for initial fetch (page 1)
-        await waitFor(() => expect(result.current.loading).toBe(false));
-
-        // Explicitly try to fetch page 1 again (this triggers line 16)
-        await act(async () => {
-            await result.current.fetchPhotos(1);
-        });
-
-        // Verify axios.get was not called again (only once total)
-        expect(mockedAxios.get).toHaveBeenCalledTimes(1);
-    });
-
-    test('explicitly tests fetching an already fetched page', async () => {
-        mockedAxios.get.mockResolvedValue({ data: mockPhotos });
-        mockedAddMetadataToPhotos.mockReturnValue(enhancedPhotos);
-
-        const { result } = renderHook(() => usePhotos());
-
-        // Initial fetch
-        await waitFor(() => expect(result.current.loading).toBe(false));
-
-        // Explicitly refetch the same page again:
-        await act(async () => {
-            await result.current.fetchPhotos(1); // Page 1 again
-        });
-
-        // Ensure the fetch was not called twice:
-        expect(mockedAxios.get).toHaveBeenCalledTimes(1); // Ensures line 16 runs
-    });
-
+    expect(mockedAxios.get).toHaveBeenCalledTimes(1);
+  });
 });

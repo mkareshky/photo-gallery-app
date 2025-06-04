@@ -1,3 +1,4 @@
+// src/components/PhotoCard.tsx
 import React from "react";
 import { css } from "../styled-system/css";
 import type { PhotoCardProps } from "../types";

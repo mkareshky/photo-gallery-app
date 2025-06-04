@@ -1,3 +1,4 @@
+// src/components/__tests__/PhotoCard.test.tsx
 /**
  * @jest-environment jsdom
  */

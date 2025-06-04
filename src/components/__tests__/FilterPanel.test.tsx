@@ -1,3 +1,4 @@
+// src/components/__tests__/FilterPanel.test.tsx
 /**
  * @jest-environment jsdom
  */

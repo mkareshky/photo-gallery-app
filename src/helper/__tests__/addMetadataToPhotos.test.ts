@@ -1,3 +1,4 @@
+// src/helper/__tests__/addMetadataToPhotos.test.ts
 /**
  * @jest-environment jsdom
  */

@@ -1,7 +1,7 @@
 // src/pages/GalleryPage.tsx
 import React, { useEffect, useState } from "react";
 import { css } from "../styled-system/css";
-import { usePhotoContext } from "../context/PhotoContext";
+import { usePhotoContext, PhotoContextTypeWithRetry } from "../context/PhotoContext";
 import { FilterPanel } from "../components/FilterPanel";
 import { useDebounce } from "../hooks/useDebounce";
 import { useInfiniteScroll } from "../hooks/useInfiniteScroll";
@@ -9,7 +9,7 @@ import { usePhotoFilter } from "../hooks/usePhotoFilter";
 import { PhotoList } from "../components/PhotoList";
 
 const GalleryPage: React.FC = () => {
-  const { photos, loading, error, loadMore, hasMore } = usePhotoContext();
+  const { photos, loading, error, loadMore, hasMore, retry } = usePhotoContext() as PhotoContextTypeWithRetry;
 
   const [rawSearchTerm, setRawSearchTerm] = useState<string>("");
   const [category, setCategory] = useState<string>("all");
@@ -61,15 +61,30 @@ const GalleryPage: React.FC = () => {
 
   if (error) {
     return (
-      <div
-        className={css({
-          p: "4",
-          color: "red.600",
-          textAlign: "center",
-        })}
-      >
-        {error}
-      </div>
+      <main className={css({ p: "6", textAlign: "center" })}>
+        <p className={css({ fontSize: "lg", color: "red.600", mb: "4" })}>
+          {error}
+        </p>
+        <button
+          onClick={retry}
+          className={css({
+            px: "4",
+            py: "2",
+            bg: "blue.600",
+            color: "white",
+            rounded: "md",
+            _hover: { bg: "blue.700" },
+            _focusVisible: {
+              outline: "2px solid",
+              outlineColor: "blue.300",
+              outlineOffset: "2px",
+            },
+            cursor: "pointer",
+          })}
+        >
+          Retry
+        </button>
+      </main>
     );
   }
 

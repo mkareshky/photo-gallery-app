@@ -1,3 +1,5 @@
+// src/copinents/CategorySelect.tsx
+
 import React from "react";
 import * as Select from "@radix-ui/react-select";
 import { ChevronDownIcon } from "@radix-ui/react-icons";

@@ -1,3 +1,4 @@
+// src/hooks/usePhotos.ts
 import { useEffect, useState, useCallback, useRef } from "react";
 import axios from "axios";
 import type { Photo } from "../types";
@@ -37,6 +38,15 @@ export function usePhotos() {
     }
   }, []);
 
+  const retry = useCallback(() => {
+    fetchedPages.current.clear();
+    setPhotos([]);
+    setPage(1);
+    setHasMore(true);
+    setError(null);
+    fetchPhotos(1);
+  }, [fetchPhotos]);
+
   useEffect(() => {
     fetchPhotos(page);
   }, [fetchPhotos, page]);
@@ -53,6 +63,7 @@ export function usePhotos() {
     error,
     loadMore,
     hasMore,
-    fetchPhotos, // <-- expose temporarily for testing
+    fetchPhotos, 
+    retry
   };
 }

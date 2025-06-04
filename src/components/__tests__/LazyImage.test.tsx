@@ -1,3 +1,4 @@
+// src/components/__tests__/LazyImage.test.tsx
 /**
  * @jest-environment jsdom
  */

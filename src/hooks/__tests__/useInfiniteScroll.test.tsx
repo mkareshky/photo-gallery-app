@@ -1,4 +1,4 @@
-// __tests__/useInfiniteScroll.test.ts
+// src/hooks/__tests__/useInfiniteScroll.test.tsx
 import React, { useEffect } from "react";
 import { render, act } from "@testing-library/react";
 import { useInfiniteScroll } from "../useInfiniteScroll";

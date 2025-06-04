@@ -1,4 +1,4 @@
-// __tests__/PhotoItem.test.tsx
+// src/components/__tests__/PhotoItem.test.tsx
 /**
  * @jest-environment jsdom
  */

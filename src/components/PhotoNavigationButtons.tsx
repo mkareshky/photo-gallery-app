@@ -1,4 +1,4 @@
-// components/PhotoNavigationButtons.tsx
+// src/components/PhotoNavigationButtons.tsx
 import React from "react";
 import { css } from "../styled-system/css";
 import { SystemStyleObject } from "../styled-system/types";

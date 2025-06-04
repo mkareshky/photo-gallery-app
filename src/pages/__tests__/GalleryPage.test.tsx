@@ -1,3 +1,4 @@
+// src/pages/__tests__/GalleryPage.test.tsx
 /**
  * @jest-environment jsdom
  */
@@ -52,6 +53,7 @@ describe("GalleryPage component", () => {
       error: null,
       loadMore: jest.fn(),
       hasMore: false,
+      retry: jest.fn(),
     };
 
     render(
@@ -91,6 +93,7 @@ describe("GalleryPage component", () => {
       error: null,
       loadMore: jest.fn(),
       hasMore: false,
+      retry: jest.fn(),
     };
 
     render(
@@ -115,6 +118,7 @@ describe("GalleryPage component", () => {
       error: null,
       loadMore: jest.fn(),
       hasMore: false,
+      retry: jest.fn(),
     };
 
     render(
@@ -163,6 +167,7 @@ describe("GalleryPage component", () => {
       error: null,
       loadMore: jest.fn(),
       hasMore: false,
+      retry: jest.fn(),
     };
 
     const { container } = render(
@@ -192,6 +197,7 @@ describe("GalleryPage component", () => {
       error: null,
       loadMore: jest.fn(),
       hasMore: false,
+      retry: jest.fn(),
     };
 
     render(
@@ -233,6 +239,7 @@ describe("GalleryPage component", () => {
       error: null,
       loadMore: jest.fn(),
       hasMore: true,
+      retry: jest.fn(),
     };
 
     render(
@@ -255,6 +262,7 @@ describe("GalleryPage component", () => {
       error: null,
       loadMore: jest.fn(),
       hasMore: true,
+      retry: jest.fn(),
     };
 
     render(
@@ -278,6 +286,7 @@ describe("GalleryPage component", () => {
       error: null,
       loadMore: jest.fn(),
       hasMore: false,
+      retry: jest.fn(),
     };
 
     render(
@@ -300,6 +309,7 @@ describe("GalleryPage component", () => {
       error: "Network failed",
       loadMore: jest.fn(),
       hasMore: false,
+      retry: jest.fn(),
     };
 
     render(
@@ -341,6 +351,7 @@ describe("GalleryPage component", () => {
       error: null,
       loadMore: mockLoad,
       hasMore: true,
+      retry: jest.fn(),
     };
 
     render(
@@ -365,6 +376,7 @@ describe("GalleryPage component", () => {
       error: null,
       loadMore: jest.fn(),
       hasMore: false,
+      retry: jest.fn(),
     };
 
     // Spy on React.useState and override only the 2nd call (category state)
@@ -412,6 +424,7 @@ describe("GalleryPage component", () => {
       error: null,
       loadMore: jest.fn(),
       hasMore: false,
+      retry: jest.fn(),
     };
 
     render(
@@ -456,6 +469,7 @@ describe("GalleryPage component", () => {
       error: null,
       loadMore: jest.fn(),
       hasMore: false,
+      retry: jest.fn(),
     };
 
     const { container } = render(
