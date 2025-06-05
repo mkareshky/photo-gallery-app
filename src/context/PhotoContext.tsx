@@ -1,17 +1,12 @@
 // src/context/PhotoContext.tsx
 import React, { createContext, useContext } from "react";
-import { usePhotoData } from "../hooks/usePhotoData";
+import { usePhotos } from "../hooks/usePhotos";
 import type { PhotoContextType } from "../types";
 
-// Now PhotoContext only provides the data layer (no retry)
 export const PhotoContext = createContext<PhotoContextType | undefined>(undefined);
 
 export const PhotoProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { photos, loading, error, loadMore, hasMore } = usePhotoData();
-  // Provide a no-op retry so that PhotoContextType is satisfied
-  const retry = () => {
-    /* Optional: wire up real retry logic here */
-  };
+  const { photos, loading, error, loadMore, hasMore, retry } = usePhotos();
 
   return (
     <PhotoContext.Provider value={{ photos, loading, error, loadMore, hasMore, retry }}>

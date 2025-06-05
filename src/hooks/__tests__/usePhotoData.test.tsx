@@ -64,14 +64,14 @@ describe("usePhotoData", () => {
             fetchPhotos: dummyFetchPhotos,
         });
 
-    render(<PhotoDataConsumer />);
-    expect(screen.getByTestId("photos-length").textContent).toBe("1");
-    expect(screen.getByTestId("loading").textContent).toBe("false");
-    expect(screen.getByTestId("error").textContent).toBe("some error");
-    expect(screen.getByTestId("hasMore").textContent).toBe("true");
+        render(<PhotoDataConsumer />);
+        expect(screen.getByTestId("photos-length").textContent).toBe("1");
+        expect(screen.getByTestId("loading").textContent).toBe("false");
+        expect(screen.getByTestId("error").textContent).toBe("some error");
+        expect(screen.getByTestId("hasMore").textContent).toBe("true");
 
-    // Clicking LoadMore should call the mocked loadMore
-    screen.getByTestId("loadMore").click();
-    expect(dummyLoadMore).toHaveBeenCalled();
-});
+        // Clicking LoadMore should call the mocked loadMore
+        screen.getByTestId("loadMore").click();
+        expect(dummyLoadMore).toHaveBeenCalled();
+    });
 });
